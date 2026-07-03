@@ -1,0 +1,50 @@
+/* frontend/src/styles/components/alert.css */
+/* FPO360 Alert Component */
+
+.alert {
+  display: flex;
+  align-items: flex-start;
+  gap: var(--space-4);
+  padding: var(--space-4) var(--space-5);
+  border-radius: var(--radius-md);
+  border-left: 4px solid;
+  background: var(--color-surface-elevated);
+  position: relative;
+}
+
+.alert--success { border-left-color: var(--color-success); }
+.alert--warning { border-left-color: var(--color-warning); }
+.alert--danger { border-left-color: var(--color-danger); }
+.alert--info { border-left-color: var(--color-info); }
+
+.alert-icon {
+  color: inherit;
+  flex-shrink: 0;
+  margin-top: 2px;
+}
+
+.alert-content {
+  flex: 1;
+}
+
+.alert-title {
+  font-weight: var(--font-weight-semibold);
+  margin-bottom: 4px;
+}
+
+.alert-description {
+  font-size: var(--font-size-sm);
+  color: var(--color-text-secondary);
+}
+
+.alert-close {
+  background: none;
+  border: none;
+  color: var(--color-text-muted);
+  cursor: pointer;
+  padding: 4px;
+}
+
+.alert-close:hover {
+  color: var(--color-text-primary);
+}

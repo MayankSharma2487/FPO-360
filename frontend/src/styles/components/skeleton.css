@@ -1,0 +1,62 @@
+/* frontend/src/styles/components/skeleton.css */
+/* FPO360 Skeleton System */
+
+.skeleton {
+  background: var(--color-surface-hover);
+  animation: skeleton-shimmer 1.8s linear infinite;
+  border-radius: var(--radius-sm);
+}
+
+.skeleton--rounded {
+  border-radius: var(--radius-full);
+}
+
+.skeleton--animated {
+  animation: skeleton-shimmer 1.8s linear infinite;
+}
+
+@keyframes skeleton-shimmer {
+  0% { background-position: 200% 0; }
+  100% { background-position: -200% 0; }
+}
+
+.skeleton-text > * {
+  margin-bottom: 8px;
+}
+
+.skeleton-text > *:last-child {
+  margin-bottom: 0;
+}
+
+.skeleton-card {
+  background: var(--color-surface);
+  border: var(--border-width-thin) solid var(--color-border);
+  border-radius: var(--radius-lg);
+  overflow: hidden;
+}
+
+.skeleton-card-body {
+  padding: var(--space-5);
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-4);
+}
+
+.skeleton-table {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.skeleton-table-row {
+  display: flex;
+  gap: 16px;
+  padding: 12px 16px;
+  background: var(--color-surface);
+}
+
+.skeleton-form {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-5);
+}

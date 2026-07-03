@@ -1,0 +1,119 @@
+/* frontend/src/styles/components/badge.css */
+/* FPO360 Badge Component — Design System v2 */
+
+.badge {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-1);
+  padding: 4px 10px;
+  border-radius: var(--radius-md);
+  font-size: var(--font-size-sm);
+  font-weight: var(--font-weight-medium);
+  line-height: 1;
+  white-space: nowrap;
+  transition: var(--transition-normal);
+  border: var(--border-width-thin) solid transparent;
+}
+
+.badge--rounded {
+  border-radius: var(--radius-full);
+}
+
+/* Variants - Filled */
+.badge--primary {
+  background: var(--color-primary-dim);
+  color: var(--color-primary);
+  border-color: var(--color-primary-border);
+}
+
+.badge--success {
+  background: var(--color-success-dim);
+  color: var(--color-success);
+  border-color: rgba(74, 222, 128, 0.3);
+}
+
+.badge--warning {
+  background: var(--color-warning-dim);
+  color: var(--color-warning);
+  border-color: rgba(245, 158, 11, 0.3);
+}
+
+.badge--danger {
+  background: var(--color-danger-dim);
+  color: var(--color-danger);
+  border-color: rgba(248, 113, 113, 0.3);
+}
+
+.badge--info {
+  background: var(--color-info-dim);
+  color: var(--color-info);
+  border-color: rgba(96, 165, 250, 0.3);
+}
+
+.badge--neutral {
+  background: var(--color-surface-elevated);
+  color: var(--color-text-secondary);
+  border-color: var(--color-border);
+}
+
+/* Outline variant */
+.badge--outline {
+  background: transparent;
+}
+
+.badge--outline.badge--primary {
+  border-color: var(--color-primary);
+  color: var(--color-primary);
+}
+
+.badge--outline.badge--success {
+  border-color: var(--color-success);
+  color: var(--color-success);
+}
+
+.badge--outline.badge--warning {
+  border-color: var(--color-warning);
+  color: var(--color-warning);
+}
+
+.badge--outline.badge--danger {
+  border-color: var(--color-danger);
+  color: var(--color-danger);
+}
+
+.badge--outline.badge--info {
+  border-color: var(--color-info);
+  color: var(--color-info);
+}
+
+.badge--outline.badge--neutral {
+  border-color: var(--color-border-light);
+  color: var(--color-text-secondary);
+}
+
+/* Sizes */
+.badge--sm {
+  padding: 2px 8px;
+  font-size: var(--font-size-xs);
+}
+
+.badge--md {
+  padding: 4px 10px;
+  font-size: var(--font-size-sm);
+}
+
+.badge--lg {
+  padding: 6px 14px;
+  font-size: var(--font-size-base);
+}
+
+/* Icon */
+.badge-icon {
+  width: 14px;
+  height: 14px;
+  flex-shrink: 0;
+}
+
+.badge-content {
+  display: inline-block;
+}

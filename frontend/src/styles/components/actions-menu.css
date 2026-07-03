@@ -1,0 +1,136 @@
+/* frontend/src/styles/components/actions-menu.css */
+/* FPO360 Actions Menu — Design System v2 */
+
+.actions-menu {
+  position: relative;
+  display: inline-block;
+}
+
+.actions-menu__trigger {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 36px;
+  height: 36px;
+  background: var(--color-surface-elevated);
+  border: var(--border-width-thin) solid var(--color-border);
+  border-radius: var(--radius-md);
+  color: var(--color-text-secondary);
+  cursor: pointer;
+  transition: var(--transition-normal);
+}
+
+.actions-menu__trigger:hover {
+  background: var(--color-surface-hover);
+  color: var(--color-text-primary);
+  border-color: var(--color-primary-border);
+}
+
+.actions-menu__trigger:focus-visible {
+  outline: 2px solid var(--color-primary);
+  outline-offset: 2px;
+}
+
+.actions-menu__dropdown {
+  position: absolute;
+  top: calc(100% + 6px);
+  right: 0;
+  z-index: var(--z-dropdown);
+  min-width: 180px;
+  background: var(--color-surface-elevated);
+  border: var(--border-width-thin) solid var(--color-border);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-lg);
+  padding: var(--space-1);
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  animation: menu-pop var(--transition-normal) ease-out forwards;
+}
+
+@keyframes menu-pop {
+  from {
+    opacity: 0;
+    transform: translateY(-8px) scale(0.96);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+.actions-menu__item {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+  width: 100%;
+  padding: var(--space-3) var(--space-4);
+  background: transparent;
+  border: none;
+  border-radius: var(--radius-md);
+  color: var(--color-text-primary);
+  font-size: var(--font-size-sm);
+  font-weight: var(--font-weight-medium);
+  text-align: left;
+  cursor: pointer;
+  transition: var(--transition-normal);
+}
+
+.actions-menu__item:hover:not(.actions-menu__disabled) {
+  background: var(--color-surface-hover);
+}
+
+.actions-menu__item:focus-visible {
+  background: var(--color-surface-hover);
+  outline: 2px solid var(--color-primary);
+  outline-offset: -2px;
+}
+
+/* Variants */
+.actions-menu__danger {
+  color: var(--color-danger);
+}
+
+.actions-menu__danger:hover {
+  background: var(--color-danger-dim);
+}
+
+.actions-menu__success {
+  color: var(--color-success);
+}
+
+.actions-menu__success:hover {
+  background: var(--color-success-dim);
+}
+
+.actions-menu__warning {
+  color: var(--color-warning);
+}
+
+.actions-menu__warning:hover {
+  background: var(--color-warning-dim);
+}
+
+.actions-menu__disabled {
+  opacity: var(--opacity-disabled);
+  cursor: not-allowed;
+}
+
+/* Icon & Label */
+.actions-menu__icon {
+  width: 18px;
+  height: 18px;
+  flex-shrink: 0;
+  color: inherit;
+}
+
+.actions-menu__label {
+  flex: 1;
+}
+
+/* Divider */
+.actions-menu__divider {
+  height: 1px;
+  background: var(--color-border);
+  margin: var(--space-1) var(--space-2);
+}

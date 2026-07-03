@@ -1,0 +1,169 @@
+/* frontend/src/styles/components/table.css */
+/* FPO360 Table System — Design System v2 */
+
+.table-container {
+  background: var(--color-surface);
+  border: var(--border-width-thin) solid var(--color-border);
+  border-radius: var(--radius-lg);
+  overflow: visible;
+  box-shadow: var(--shadow-sm);
+}
+
+.table-scroll {
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+  width: 100%;
+}
+
+.table {
+  width: max-content;
+  min-width: 100%;
+  min-width: 1100px;
+  border-collapse: collapse;
+  font-size: var(--font-size-sm);
+}
+
+.table-header {
+  background: var(--color-surface-elevated);
+  border-bottom: var(--border-width-thin) solid var(--color-border);
+  position: sticky;
+  top: 0;
+  z-index: 10;
+}
+
+.table-header th {
+  padding: var(--table-cell-padding);
+  text-align: left;
+  font-weight: var(--font-weight-semibold);
+  color: var(--color-text-secondary);
+  text-transform: uppercase;
+  font-size: var(--font-size-xs);
+  letter-spacing: var(--letter-spacing-wide);
+  border-right: var(--border-width-thin) solid var(--color-border-light);
+  white-space: nowrap;
+}
+
+.table-header th:last-child {
+  border-right: none;
+}
+
+.table-body .table-row {
+  border-bottom: var(--border-width-thin) solid var(--color-border-light);
+  transition: var(--transition-normal);
+}
+
+.table-body .table-row:last-child {
+  border-bottom: none;
+}
+
+.table-body .table-row:hover {
+  background: var(--color-surface-hover);
+}
+
+.table-body .table-selected {
+  background: var(--color-primary-dim);
+}
+
+.table-cell {
+  padding: var(--table-cell-padding);
+  color: var(--color-text-primary);
+  vertical-align: middle;
+  white-space: nowrap;
+}
+
+.table-sortable {
+  cursor: pointer;
+  user-select: none;
+}
+
+.table-sortable:hover {
+  color: var(--color-text-primary);
+}
+
+/* Toolbar */
+.table-toolbar {
+  padding: var(--space-4) var(--space-5);
+  border-bottom: var(--border-width-thin) solid var(--color-border);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-4);
+  flex-wrap: wrap;
+}
+
+
+
+/* Loading Skeleton */
+.table-skeleton {
+  height: 18px;
+  background: linear-gradient(
+    90deg,
+    var(--color-surface-hover) 25%,
+    var(--color-surface) 50%,
+    var(--color-surface-hover) 75%
+  );
+  background-size: 200% 100%;
+  border-radius: var(--radius-sm);
+  animation: shimmer 1.5s infinite;
+}
+
+@keyframes shimmer {
+  0% { background-position: 200% 0; }
+  100% { background-position: -200% 0; }
+}
+
+/* Empty State */
+.table-empty {
+  padding: var(--space-16) var(--space-8) !important;
+  text-align: center;
+}
+
+.empty-state {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: var(--space-4);
+  max-width: 360px;
+  margin: 0 auto;
+}
+
+.empty-icon {
+  font-size: 3rem;
+  opacity: 0.3;
+  margin-bottom: 8px;
+}
+
+.empty-title {
+  font-size: var(--font-size-lg);
+  font-weight: var(--font-weight-semibold);
+  color: var(--color-text-primary);
+}
+
+.empty-description {
+  font-size: var(--font-size-sm);
+  color: var(--color-text-secondary);
+  max-width: 320px;
+}
+
+.empty-action {
+  margin-top: var(--space-6);
+}
+
+/* Responsive scrolling */
+@media (max-width: 1024px) {
+  .table-scroll {
+    overflow-x: auto;
+  }
+  
+  .table {
+    min-width: 1100px;
+  }
+}
+
+@media (max-width: 768px) {
+  .table-scroll {
+    margin: 0 -16px;
+    padding: 0 16px;
+  }
+}
