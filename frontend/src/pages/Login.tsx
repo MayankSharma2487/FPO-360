@@ -37,7 +37,7 @@ export default function Login() {
       <div className="login-left">
         <div className="login-brand">
           <span className="brand-mark">F</span>
-          <span className="brand-name">PO<span className="brand-accent">360</span></span>
+          <span className="brand-name">FPO<span className="brand-accent">360</span></span>
         </div>
         <p className="brand-tagline">Farmer Producer Organization<br />Enterprise Resource Platform</p>
 

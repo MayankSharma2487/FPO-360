@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react'
 import api from '../services/api'
 import { useAuth } from '../context/AuthContext'
+import { procurementService } from '../services/procurementService'
 
 interface ManagerData {
   farmer_registrations: number
@@ -68,11 +69,30 @@ export default function ManagerDashboard() {
   const [loading, setLoading] = useState(true)
 
   useEffect(() => {
-    api
-      .get<ManagerData>('/dashboard/manager')
-      .then((res) => setData(res.data))
-      .catch(() => setError('Could not load Manager dashboard data.'))
-      .finally(() => setLoading(false))
+    const loadDashboardData = async () => {
+      try {
+        // Fetch both the dashboard metrics and the actual procurements concurrently
+        const [dashboardRes, procurementsRes] = await Promise.all([
+          api.get<ManagerData>('/dashboard/manager'),
+          procurementService.getProcurements().catch(() => ({ data: [] })) // Safe fallback if procurements fail
+        ]);
+
+        // Calculate the actual active procurements count
+        const activeProcurementsCount = procurementsRes.data.filter((p: any) => p.is_active).length;
+
+        // Merge the actual procurement count into the dashboard data
+        setData({
+          ...dashboardRes.data,
+          procurement_activities: activeProcurementsCount
+        });
+      } catch (err) {
+        setError('Could not load Manager dashboard data.');
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    loadDashboardData();
   }, [])
 
   const hour = new Date().getHours()

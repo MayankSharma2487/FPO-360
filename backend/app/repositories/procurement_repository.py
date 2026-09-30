@@ -11,10 +11,14 @@ class ProcurementRepository:
     def __init__(self, db: Session):
         self.db = db
 
-    def create(self, procurement: Procurement) -> Procurement:
+    def create(self, procurement: Procurement, commit: bool = True) -> Procurement:
         self.db.add(procurement)
-        self.db.commit()
-        self.db.refresh(procurement)
+        self.db.flush()
+
+        if commit:
+            self.db.commit()
+            self.db.refresh(procurement)
+
         return procurement
 
     def get_by_id(self, procurement_id: int) -> Optional[Procurement]:
@@ -88,13 +92,33 @@ class ProcurementRepository:
         result = self.db.scalar(select(func.sum(Procurement.total_amount)).where(Procurement.organization_id == organization_id))
         return float(result) if result else 0.0
 
-    def update(self, procurement: Procurement) -> Procurement:
-        self.db.commit()
-        self.db.refresh(procurement)
+    def update(self, procurement: Procurement, commit: bool = True) -> Procurement:
+        self.db.flush()
+
+        if commit:
+            self.db.commit()
+            self.db.refresh(procurement)
+
         return procurement
 
-    def toggle_active(self, procurement: Procurement, is_active: bool) -> Procurement:
+    def toggle_active(
+        self,
+        procurement: Procurement,
+        is_active: bool,
+        commit: bool = True
+    ) -> Procurement:
         procurement.is_active = is_active
-        self.db.commit()
-        self.db.refresh(procurement)
+        self.db.flush()
+
+        if commit:
+            self.db.commit()
+            self.db.refresh(procurement)
+
         return procurement
+
+    def commit(self):
+        self.db.commit()
+
+
+    def rollback(self):
+        self.db.rollback()

@@ -8,6 +8,8 @@ from app.repositories.farmer_repository import FarmerRepository
 from app.repositories.crop_master_repository import CropMasterRepository
 from app.models.procurement import Procurement
 from app.schemas.procurement import ProcurementCreate, ProcurementUpdate
+from app.repositories.inventory_repository import InventoryRepository
+from app.models.inventory import InventoryLedger
 
 
 class ProcurementService:
@@ -16,6 +18,7 @@ class ProcurementService:
         self.repo = ProcurementRepository(db)
         self.farmer_repo = FarmerRepository(db)
         self.crop_repo = CropMasterRepository(db)
+        self.inventory_repo = InventoryRepository(db)
 
     def _generate_procurement_no(self, organization_id: int) -> str:
         """Generate unique procurement number in format PR-YYYY-00001"""
@@ -117,7 +120,34 @@ class ProcurementService:
             is_active=True
         )
 
-        return self.repo.create(procurement)
+        try:
+            # Create procurement but do not commit yet
+            self.repo.create(procurement, commit=False)
+
+            # Create corresponding Inventory IN entry
+            inventory_entry = InventoryLedger(
+                organization_id=procurement.organization_id,
+                crop_id=procurement.crop_id,
+                transaction_type="IN",
+                quantity=float(procurement.quantity),
+                reference_type="PROCUREMENT",
+                reference_id=procurement.id,
+                remarks=f"Procurement {procurement.procurement_no}",
+                is_active=True,
+            )
+
+            self.inventory_repo.add(inventory_entry)
+
+            # Commit procurement + inventory together
+            self.db.commit()
+
+            self.db.refresh(procurement)
+
+            return procurement
+
+        except Exception:
+            self.db.rollback()
+            raise
 
     def update_procurement(self, procurement_id: int, payload: ProcurementUpdate, current_user) -> Procurement:
         """
@@ -187,13 +217,40 @@ class ProcurementService:
 
     def list_procurements(self, current_user, filters=None):
         """
-        List procurements accessible to current user.
+        List procurements with farmer and crop names populated.
         
         Note: Database stores quantity in KG. Frontend handles reverse conversion for display.
         """
         if current_user.role.name == "Super Admin":
-            return self.repo.list_all(filters=filters)
-        return self.repo.list_all(current_user.organization_id, filters)
+            procurements = self.repo.list_all(filters=filters)
+        else:
+            procurements = self.repo.list_all(current_user.organization_id, filters)
+
+        result = []
+        for proc in procurements:
+            data = {
+                "id": proc.id,
+                "procurement_no": proc.procurement_no,
+                "procurement_date": proc.procurement_date,
+                "farmer_id": proc.farmer_id,
+                "crop_id": proc.crop_id,
+                "organization_id": proc.organization_id,
+                "quantity": proc.quantity,
+                "unit": proc.unit,
+                "rate_per_unit": proc.rate_per_unit,
+                "total_amount": proc.total_amount,
+                "quality_grade": proc.quality_grade,
+                "remarks": proc.remarks,
+                "is_active": proc.is_active,
+                "created_at": proc.created_at,
+                "updated_at": proc.updated_at,
+                
+                # Populate farmer and crop names
+                "farmer_name": proc.farmer.farmer_name if proc.farmer else "—",
+                "crop_name": proc.crop.crop_name if proc.crop else "—",
+            }
+            result.append(data)
+        return result
 
     def get_procurement(self, procurement_id: int, current_user):
         """

@@ -48,6 +48,36 @@ class FarmerCropService:
         return self.repo.toggle_active(record, is_active)
 
     def list_farmer_crops(self, current_user):
+        """
+        List farmer crops with farmer and crop names populated
+        """
         if current_user.role.name == "Super Admin":
-            return self.repo.list_all()
-        return self.repo.list_all(current_user.organization_id)
+            farmer_crops = self.repo.list_all()
+        else:
+            farmer_crops = self.repo.list_all(current_user.organization_id)
+
+        result = []
+        for fc in farmer_crops:
+            data = {
+                "id": fc.id,
+                "farmer_id": fc.farmer_id,
+                "crop_id": fc.crop_id,
+                "organization_id": fc.organization_id,
+                "season": fc.season,
+                "year": fc.year,
+                "area_acres": fc.area_acres,
+                "sowing_date": fc.sowing_date,
+                "harvest_date": fc.harvest_date,
+                "expected_yield": fc.expected_yield,
+                "actual_yield": fc.actual_yield,
+                "remarks": fc.remarks,
+                "is_active": fc.is_active,
+                "created_at": fc.created_at,
+                "updated_at": fc.updated_at,
+                
+                # Populate farmer and crop names
+                "farmer_name": fc.farmer.farmer_name if fc.farmer else "—",
+                "crop_name": fc.crop.crop_name if fc.crop else "—",
+            }
+            result.append(data)
+        return result

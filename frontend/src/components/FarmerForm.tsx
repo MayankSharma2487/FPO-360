@@ -49,7 +49,21 @@ export const FarmerForm: React.FC<FarmerFormProps> = ({
     e.preventDefault();
     setLoading(true);
     try {
-      await onSubmit(formData);
+      // The backend schema types land_holding_acres as an optional float and
+      // date_of_birth as an optional datetime. An empty string is neither a
+      // valid number/date nor `null`, so FastAPI/Pydantic rejects it with a
+      // 422. Convert "unset" values to `null` (and coerce the acreage to a
+      // number) before sending the payload.
+      const payload = {
+        ...formData,
+        land_holding_acres:
+          formData.land_holding_acres === '' || formData.land_holding_acres === null
+            ? null
+            : Number(formData.land_holding_acres),
+        date_of_birth: formData.date_of_birth === '' ? null : formData.date_of_birth,
+        village_id: formData.village_id === '' ? null : formData.village_id,
+      };
+      await onSubmit(payload);
     } finally {
       setLoading(false);
     }

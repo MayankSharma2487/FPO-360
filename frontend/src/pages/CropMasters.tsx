@@ -8,8 +8,11 @@ interface CropMaster {
   id: number;
   crop_code: string;
   crop_name: string;
-  category?: string;
+  crop_category?: string;
+  unit: string;
   is_active: boolean;
+  created_at: string;
+  updated_at?: string;
 }
 
 export default function CropMasters() {
@@ -72,7 +75,7 @@ export default function CropMasters() {
   const activeCount = crops.filter(c => c.is_active).length;
 
   return (
-    <RoleGuard allowedRoles={['Super Admin', 'FPO Admin']}>
+    <RoleGuard allowedRoles={['Super Admin', 'FPO Admin','Manager']}>
       <div className="page-wrapper">
         <div className="page-header">
           <div>
@@ -100,7 +103,7 @@ export default function CropMasters() {
           <input
             type="text"
             className="search-input"
-            placeholder="Search crops..."
+            placeholder="Search crops by name or code..."
             value={search}
             onChange={(e) => setSearch(e.target.value)}
           />
@@ -125,6 +128,7 @@ export default function CropMasters() {
                     <th>Crop Name</th>
                     <th>Code</th>
                     <th>Category</th>
+                    <th>Unit</th>
                     <th>Status</th>
                     <th className="w-20 text-right">Actions</th>
                   </tr>
@@ -132,7 +136,7 @@ export default function CropMasters() {
                 <tbody>
                   {filtered.length === 0 ? (
                     <tr>
-                      <td colSpan={6} className="empty-row">
+                      <td colSpan={7} className="empty-row">
                         {search ? 'No matching crops found.' : 'No crops found.'}
                       </td>
                     </tr>
@@ -149,13 +153,14 @@ export default function CropMasters() {
                                 color: `rgb(74, 222, 128)`
                               }}
                             >
-                              {getInitials(c.crop_name)}
+                              {getInitials(c.crop_name ?? '')}
                             </div>
-                            <span className="primary-cell font-medium">{c.crop_name}</span>
+                            <span className="primary-cell font-medium">{c.crop_name ?? '—'}</span>
                           </div>
                         </td>
-                        <td><span className="mono-tag">{c.crop_code}</span></td>
-                        <td className="text-sm text-gray-400">{c.category || '—'}</td>
+                        <td><span className="mono-tag">{c.crop_code ?? '—'}</span></td>
+                        <td className="text-sm text-gray-400">{c.crop_category ?? '—'}</td>
+                        <td className="text-sm text-gray-400">{c.unit ?? 'Kg'}</td>
                         <td>
                           <span className={`status-pill ${c.is_active ? 'status-pill--active' : 'status-pill--inactive'}`}>
                             {c.is_active ? 'Active' : 'Inactive'}
@@ -222,7 +227,7 @@ export default function CropMasters() {
               </div>
               <div className="modal-body">
                 <CropMasterForm
-                  initialData={editingCrop ?? undefined}
+                  initialData={editingCrop}
                   onSubmit={async (data) => {
                     try {
                       if (editingCrop?.id) {

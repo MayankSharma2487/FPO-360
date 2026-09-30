@@ -51,4 +51,4 @@ def toggle_procurement_status(
     current_user: User = Depends(require_roles("Super Admin", "FPO Admin", "Manager"))
 ):
     service = ProcurementService(db)
-    return service.toggle_status(record_id, is_active, current_user)
+    return service.toggle_procurement_status(record_id, is_active, current_user)

@@ -13,8 +13,15 @@ import Shareholders from './pages/Shareholders';
 import CropMasters from './pages/CropMasters';
 import FarmerCrops from './pages/FarmerCrops';
 import Procurements from './pages/Procurements';
+import ProcurementDetail from './pages/ProcurementDetail';
 
 import { RoleGuard } from './components/RoleGuard';
+import ProcurementReceipt from "./pages/ProcurementReceipt";
+import Payments from './pages/Payments';
+import PaymentDetail from './pages/PaymentDetail';
+import PaymentReceipt from './pages/PaymentReceipt';
+import Inventory from './pages/Inventory';
+import InventoryLedger from './pages/InventoryLedger';
 
 function ComingSoon({ page }: { page: string }) {
   return (
@@ -71,9 +78,11 @@ export default function App() {
 
             {/* Procurement Module */}
             <Route path="procurement" element={<Procurements />} />
+            <Route path="procurement/:id" element={<ProcurementDetail />} />
 
             {/* Future Modules */}
-            <Route path="inventory" element={<ComingSoon page="Inventory" />} />
+            <Route path="inventory" element={<Inventory />} />
+            <Route path="inventory/:cropId" element={<InventoryLedger />} />
             <Route path="sales" element={<ComingSoon page="Sales" />} />
             <Route path="finance" element={<ComingSoon page="Finance" />} />
             <Route path="licenses" element={<ComingSoon page="Licenses" />} />
@@ -81,7 +90,10 @@ export default function App() {
             <Route path="settings" element={<ComingSoon page="Settings" />} />
             <Route path="roles" element={<ComingSoon page="Roles" />} />
             <Route path="permissions" element={<ComingSoon page="Permissions" />} />
-
+            <Route path="procurement/:id/receipt" element={<ProcurementReceipt />}/>
+            <Route path="payments" element={<Payments />} />
+            <Route path="payments/:id" element={<PaymentDetail />} />
+            <Route path="payments/:id/receipt" element={<PaymentReceipt />} />
           </Route>
 
           <Route path="*" element={<Navigate to="/dashboard" replace />} />
@@ -91,4 +103,3 @@ export default function App() {
     </BrowserRouter>
   );
 }
-

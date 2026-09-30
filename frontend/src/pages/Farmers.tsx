@@ -4,6 +4,7 @@ import { FarmerForm } from '../components/FarmerForm';
 import { farmerService } from '../services/farmerService';
 import { useAuth } from '../context/AuthContext';
 import { ActionsMenu } from '../components/ActionsMenu';
+import { getApiErrorMessage } from '../utils/errors';
 
 interface Farmer {
   id: number;
@@ -44,7 +45,7 @@ export default function Farmers() {
       const res = await farmerService.getFarmers();
       setFarmers(res.data);
     } catch (err: any) {
-      setError(err?.response?.data?.detail || 'Failed to load farmers');
+      setError(getApiErrorMessage(err, 'Failed to load farmers'));
     } finally {
       setLoading(false);
     }
@@ -250,7 +251,7 @@ export default function Farmers() {
                       setTimeout(() => setSuccess(null), 3000);
                       loadFarmers();
                     } catch (err: any) {
-                      setError(err?.response?.data?.detail || 'Failed to save farmer');
+                      setError(getApiErrorMessage(err, 'Failed to save farmer'));
                     }
                   }}
                   onCancel={() => setShowForm(false)}

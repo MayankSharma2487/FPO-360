@@ -4,31 +4,18 @@
    Accent: #4ade80 (growth green)
    ============================================= */
 
-/* frontend/src/styles.css */
-/* =============================================
-   FPO360 ERP — Global Stylesheet
-   Design Tokens v2 Imported
-   ============================================= */
-
+/* --- ALL IMPORTS MUST BE AT THE VERY TOP --- */
 @import './styles/tokens.css';
-
-/* Legacy variable mapping - safe backwards compatibility */
-:root {
-  --bg-base: var(--color-background);
-  --bg-surface: var(--color-surface);
-  --bg-elevated: var(--color-surface-elevated);
-  --bg-hover: var(--color-surface-hover);
-  --accent: var(--color-primary);
-  --accent-dim: var(--color-primary-dim);
-  --accent-border: var(--color-primary-border);
-  --blue: var(--color-info);
-  --amber: var(--color-warning);
-  --red: var(--color-danger);
-  --radius: var(--radius-lg);
-  --radius-sm: var(--radius-sm);
-}
-
-/* Global resets and base styles remain untouched */
+@import './styles/components/button.css';
+@import './styles/components/badge.css';
+@import './styles/components/actions-menu.css';
+@import './styles/components/table.css';
+@import './styles/components/search-input.css';
+@import './styles/components/modal.css';
+@import './styles/components/forms.css';
+/* =============================================
+   GLOBAL RESETS
+   ============================================= */
 *,
 *::before,
 *::after {
@@ -37,31 +24,11 @@
   padding: 0;
 }
 
-/* Scrollbar using tokens */
-::-webkit-scrollbar {
-  width: var(--scrollbar-width);
-}
-
-::-webkit-scrollbar-track {
-  background: var(--scrollbar-track);
-}
-
-::-webkit-scrollbar-thumb {
-  background: var(--scrollbar-thumb);
-  border-radius: 3px;
-}
-
-/* The rest of your original stylesheet continues here unchanged... */
-
-*,
-*::before,
-*::after {
-  box-sizing: border-box;
-  margin: 0;
-  padding: 0;
-}
-
+/* =============================================
+   VARIABLES
+   ============================================= */
 :root {
+  /* Hardcoded base values */
   --bg-base: #0b0f14;
   --bg-surface: #111722;
   --bg-elevated: #1a2233;
@@ -85,7 +52,23 @@
   --navbar-h: 60px;
   --radius: 10px;
   --radius-sm: 6px;
+  --table-cell-padding: 12px 16px;
 
+  /* Legacy variable mapping - safe backwards compatibility */
+  --bg-base: var(--color-background, #0b0f14);
+  --bg-surface: var(--color-surface, #111722);
+  --bg-elevated: var(--color-surface-elevated, #1a2233);
+  --bg-hover: var(--color-surface-hover, #1e2a3d);
+  --accent: var(--color-primary, #4ade80);
+  --accent-dim: var(--color-primary-dim, rgba(74, 222, 128, 0.12));
+  --accent-border: var(--color-primary-border, rgba(74, 222, 128, 0.25));
+  --blue: var(--color-info, #60a5fa);
+  --amber: var(--color-warning, #f59e0b);
+  --red: var(--color-danger, #f87171);
+  --radius: var(--radius-lg, 10px);
+  --radius-sm: var(--radius-sm, 6px);
+
+  /* Typography */
   font-family: 'Inter', system-ui, sans-serif;
   font-size: 14px;
   line-height: 1.6;
@@ -94,505 +77,19 @@
   -webkit-font-smoothing: antialiased;
 }
 
-/* ---- SCROLLBAR ---- */
+/* =============================================
+   SCROLLBAR
+   ============================================= */
 ::-webkit-scrollbar {
-  width: 6px;
+  width: var(--scrollbar-width, 6px);
 }
 
 ::-webkit-scrollbar-track {
-  background: var(--bg-base);
+  background: var(--scrollbar-track, var(--bg-base));
 }
 
 ::-webkit-scrollbar-thumb {
-  background: var(--border);
-  border-radius: 3px;
-}
-
-
-/* frontend/src/styles.css */
-@import './styles/tokens.css';
-@import './styles/components/button.css';
-
-/* Legacy variable mapping - safe backwards compatibility */
-:root {
-  --bg-base: var(--color-background);
-  --bg-surface: var(--color-surface);
-  --bg-elevated: var(--color-surface-elevated);
-  --bg-hover: var(--color-surface-hover);
-  --accent: var(--color-primary);
-  --accent-dim: var(--color-primary-dim);
-  --accent-border: var(--color-primary-border);
-  --blue: var(--color-info);
-  --amber: var(--color-warning);
-  --red: var(--color-danger);
-  --radius: var(--radius-lg);
-  --radius-sm: var(--radius-sm);
-}
-
-/* Global resets and base styles remain untouched */
-*,
-*::before,
-*::after {
-  box-sizing: border-box;
-  margin: 0;
-  padding: 0;
-}
-
-/* Scrollbar using tokens */
-::-webkit-scrollbar {
-  width: var(--scrollbar-width);
-}
-
-::-webkit-scrollbar-track {
-  background: var(--scrollbar-track);
-}
-
-::-webkit-scrollbar-thumb {
-  background: var(--scrollbar-thumb);
-  border-radius: 3px;
-}
-
-/* frontend/src/styles.css */
-@import './styles/tokens.css';
-@import './styles/components/button.css';
-@import './styles/components/badge.css';
-
-/* Legacy variable mapping - safe backwards compatibility */
-:root {
-  --bg-base: var(--color-background);
-  --bg-surface: var(--color-surface);
-  --bg-elevated: var(--color-surface-elevated);
-  --bg-hover: var(--color-surface-hover);
-  --accent: var(--color-primary);
-  --accent-dim: var(--color-primary-dim);
-  --accent-border: var(--color-primary-border);
-  --blue: var(--color-info);
-  --amber: var(--color-warning);
-  --red: var(--color-danger);
-  --radius: var(--radius-lg);
-  --radius-sm: var(--radius-sm);
-}
-
-/* Global resets and base styles remain untouched */
-*,
-*::before,
-*::after {
-  box-sizing: border-box;
-  margin: 0;
-  padding: 0;
-}
-
-/* Scrollbar using tokens */
-::-webkit-scrollbar {
-  width: var(--scrollbar-width);
-}
-
-::-webkit-scrollbar-track {
-  background: var(--scrollbar-track);
-}
-
-::-webkit-scrollbar-thumb {
-  background: var(--scrollbar-thumb);
-  border-radius: 3px;
-}
-
-/* frontend/src/styles.css */
-@import './styles/tokens.css';
-@import './styles/components/button.css';
-@import './styles/components/badge.css';
-@import './styles/components/actions-menu.css';
-
-/* Legacy variable mapping - safe backwards compatibility */
-:root {
-  --bg-base: var(--color-background);
-  --bg-surface: var(--color-surface);
-  --bg-elevated: var(--color-surface-elevated);
-  --bg-hover: var(--color-surface-hover);
-  --accent: var(--color-primary);
-  --accent-dim: var(--color-primary-dim);
-  --accent-border: var(--color-primary-border);
-  --blue: var(--color-info);
-  --amber: var(--color-warning);
-  --red: var(--color-danger);
-  --radius: var(--radius-lg);
-  --radius-sm: var(--radius-sm);
-}
-
-/* Global resets and base styles remain untouched */
-*,
-*::before,
-*::after {
-  box-sizing: border-box;
-  margin: 0;
-  padding: 0;
-}
-
-/* Scrollbar using tokens */
-::-webkit-scrollbar {
-  width: var(--scrollbar-width);
-}
-
-::-webkit-scrollbar-track {
-  background: var(--scrollbar-track);
-}
-
-::-webkit-scrollbar-thumb {
-  background: var(--scrollbar-thumb);
-  border-radius: 3px;
-}
-
-/* frontend/src/styles.css */
-@import './styles/tokens.css';
-@import './styles/components/button.css';
-@import './styles/components/badge.css';
-@import './styles/components/actions-menu.css';
-@import './styles/components/table.css';
-
-/* Legacy variable mapping - safe backwards compatibility */
-:root {
-  --bg-base: var(--color-background);
-  --bg-surface: var(--color-surface);
-  --bg-elevated: var(--color-surface-elevated);
-  --bg-hover: var(--color-surface-hover);
-  --accent: var(--color-primary);
-  --accent-dim: var(--color-primary-dim);
-  --accent-border: var(--color-primary-border);
-  --blue: var(--color-info);
-  --amber: var(--color-warning);
-  --red: var(--color-danger);
-  --radius: var(--radius-lg);
-  --radius-sm: var(--radius-sm);
-  --table-cell-padding: 12px 16px;
-}
-
-/* Global resets and base styles remain untouched */
-*,
-*::before,
-*::after {
-  box-sizing: border-box;
-  margin: 0;
-  padding: 0;
-}
-
-/* Scrollbar using tokens */
-::-webkit-scrollbar {
-  width: var(--scrollbar-width);
-}
-
-::-webkit-scrollbar-track {
-  background: var(--scrollbar-track);
-}
-
-::-webkit-scrollbar-thumb {
-  background: var(--scrollbar-thumb);
-  border-radius: 3px;
-}
-
-/* frontend/src/styles.css */
-@import './styles/tokens.css';
-@import './styles/components/button.css';
-@import './styles/components/badge.css';
-@import './styles/components/actions-menu.css';
-@import './styles/components/table.css';
-@import './styles/components/search-input.css';
-
-/* Legacy variable mapping - safe backwards compatibility */
-:root {
-  --bg-base: var(--color-background);
-  --bg-surface: var(--color-surface);
-  --bg-elevated: var(--color-surface-elevated);
-  --bg-hover: var(--color-surface-hover);
-  --accent: var(--color-primary);
-  --accent-dim: var(--color-primary-dim);
-  --accent-border: var(--color-primary-border);
-  --blue: var(--color-info);
-  --amber: var(--color-warning);
-  --red: var(--color-danger);
-  --radius: var(--radius-lg);
-  --radius-sm: var(--radius-sm);
-  --table-cell-padding: 12px 16px;
-}
-
-/* Global resets and base styles remain untouched */
-*,
-*::before,
-*::after {
-  box-sizing: border-box;
-  margin: 0;
-  padding: 0;
-}
-
-/* Scrollbar using tokens */
-::-webkit-scrollbar {
-  width: var(--scrollbar-width);
-}
-
-::-webkit-scrollbar-track {
-  background: var(--scrollbar-track);
-}
-
-::-webkit-scrollbar-thumb {
-  background: var(--scrollbar-thumb);
-  border-radius: 3px;
-}
-
-/* frontend/src/styles.css */
-@import './styles/tokens.css';
-@import './styles/components/button.css';
-@import './styles/components/badge.css';
-@import './styles/components/actions-menu.css';
-@import './styles/components/table.css';
-@import './styles/components/search-input.css';
-@import './styles/components/modal.css';
-
-/* Legacy variable mapping - safe backwards compatibility */
-:root {
-  --bg-base: var(--color-background);
-  --bg-surface: var(--color-surface);
-  --bg-elevated: var(--color-surface-elevated);
-  --bg-hover: var(--color-surface-hover);
-  --accent: var(--color-primary);
-  --accent-dim: var(--color-primary-dim);
-  --accent-border: var(--color-primary-border);
-  --blue: var(--color-info);
-  --amber: var(--color-warning);
-  --red: var(--color-danger);
-  --radius: var(--radius-lg);
-  --radius-sm: var(--radius-sm);
-  --table-cell-padding: 12px 16px;
-}
-
-/* Global resets and base styles remain untouched */
-*,
-*::before,
-*::after {
-  box-sizing: border-box;
-  margin: 0;
-  padding: 0;
-}
-
-/* Scrollbar using tokens */
-::-webkit-scrollbar {
-  width: var(--scrollbar-width);
-}
-
-::-webkit-scrollbar-track {
-  background: var(--scrollbar-track);
-}
-
-::-webkit-scrollbar-thumb {
-  background: var(--scrollbar-thumb);
-  border-radius: 3px;
-}
-
-/* frontend/src/styles.css */
-@import './styles/tokens.css';
-@import './styles/components/button.css';
-@import './styles/components/badge.css';
-@import './styles/components/actions-menu.css';
-@import './styles/components/table.css';
-@import './styles/components/search-input.css';
-@import './styles/components/modal.css';
-@import './styles/components/forms.css';
-
-/* Legacy variable mapping - safe backwards compatibility */
-:root {
-  --bg-base: var(--color-background);
-  --bg-surface: var(--color-surface);
-  --bg-elevated: var(--color-surface-elevated);
-  --bg-hover: var(--color-surface-hover);
-  --accent: var(--color-primary);
-  --accent-dim: var(--color-primary-dim);
-  --accent-border: var(--color-primary-border);
-  --blue: var(--color-info);
-  --amber: var(--color-warning);
-  --red: var(--color-danger);
-  --radius: var(--radius-lg);
-  --radius-sm: var(--radius-sm);
-  --table-cell-padding: 12px 16px;
-}
-
-/* Global resets and base styles remain untouched */
-*,
-*::before,
-*::after {
-  box-sizing: border-box;
-  margin: 0;
-  padding: 0;
-}
-
-/* Scrollbar using tokens */
-::-webkit-scrollbar {
-  width: var(--scrollbar-width);
-}
-
-::-webkit-scrollbar-track {
-  background: var(--scrollbar-track);
-}
-
-::-webkit-scrollbar-thumb {
-  background: var(--scrollbar-thumb);
-  border-radius: 3px;
-}
-
-/* frontend/src/styles.css */
-@import './styles/tokens.css';
-@import './styles/components/button.css';
-@import './styles/components/badge.css';
-@import './styles/components/actions-menu.css';
-@import './styles/components/table.css';
-@import './styles/components/search-input.css';
-@import './styles/components/modal.css';
-@import './styles/components/forms.css';
-@import './styles/components/alert.css';
-@import './styles/components/toast.css';
-
-/* Legacy variable mapping - safe backwards compatibility */
-:root {
-  --bg-base: var(--color-background);
-  --bg-surface: var(--color-surface);
-  --bg-elevated: var(--color-surface-elevated);
-  --bg-hover: var(--color-surface-hover);
-  --accent: var(--color-primary);
-  --accent-dim: var(--color-primary-dim);
-  --accent-border: var(--color-primary-border);
-  --blue: var(--color-info);
-  --amber: var(--color-warning);
-  --red: var(--color-danger);
-  --radius: var(--radius-lg);
-  --radius-sm: var(--radius-sm);
-  --table-cell-padding: 12px 16px;
-}
-
-/* Global resets and base styles remain untouched */
-*,
-*::before,
-*::after {
-  box-sizing: border-box;
-  margin: 0;
-  padding: 0;
-}
-
-/* Scrollbar using tokens */
-::-webkit-scrollbar {
-  width: var(--scrollbar-width);
-}
-
-::-webkit-scrollbar-track {
-  background: var(--scrollbar-track);
-}
-
-::-webkit-scrollbar-thumb {
-  background: var(--scrollbar-thumb);
-  border-radius: 3px;
-}
-
-/* frontend/src/styles.css */
-@import './styles/tokens.css';
-@import './styles/components/button.css';
-@import './styles/components/badge.css';
-@import './styles/components/actions-menu.css';
-@import './styles/components/table.css';
-@import './styles/components/search-input.css';
-@import './styles/components/modal.css';
-@import './styles/components/forms.css';
-@import './styles/components/alert.css';
-@import './styles/components/toast.css';
-@import './styles/components/skeleton.css';
-@import './styles/components/empty-state.css';
-
-/* Legacy variable mapping - safe backwards compatibility */
-:root {
-  --bg-base: var(--color-background);
-  --bg-surface: var(--color-surface);
-  --bg-elevated: var(--color-surface-elevated);
-  --bg-hover: var(--color-surface-hover);
-  --accent: var(--color-primary);
-  --accent-dim: var(--color-primary-dim);
-  --accent-border: var(--color-primary-border);
-  --blue: var(--color-info);
-  --amber: var(--color-warning);
-  --red: var(--color-danger);
-  --radius: var(--radius-lg);
-  --radius-sm: var(--radius-sm);
-  --table-cell-padding: 12px 16px;
-}
-
-/* Global resets and base styles remain untouched */
-*,
-*::before,
-*::after {
-  box-sizing: border-box;
-  margin: 0;
-  padding: 0;
-}
-
-/* Scrollbar using tokens */
-::-webkit-scrollbar {
-  width: var(--scrollbar-width);
-}
-
-::-webkit-scrollbar-track {
-  background: var(--scrollbar-track);
-}
-
-::-webkit-scrollbar-thumb {
-  background: var(--scrollbar-thumb);
-  border-radius: 3px;
-}
-
-/* frontend/src/styles.css */
-@import './styles/tokens.css';
-@import './styles/components/button.css';
-@import './styles/components/badge.css';
-@import './styles/components/actions-menu.css';
-@import './styles/components/table.css';
-@import './styles/components/search-input.css';
-@import './styles/components/modal.css';
-@import './styles/components/forms.css';
-@import './styles/components/alert.css';
-@import './styles/components/toast.css';
-@import './styles/components/skeleton.css';
-@import './styles/components/empty-state.css';
-@import './styles/components/dashboard-card.css';
-
-/* Legacy variable mapping - safe backwards compatibility */
-:root {
-  --bg-base: var(--color-background);
-  --bg-surface: var(--color-surface);
-  --bg-elevated: var(--color-surface-elevated);
-  --bg-hover: var(--color-surface-hover);
-  --accent: var(--color-primary);
-  --accent-dim: var(--color-primary-dim);
-  --accent-border: var(--color-primary-border);
-  --blue: var(--color-info);
-  --amber: var(--color-warning);
-  --red: var(--color-danger);
-  --radius: var(--radius-lg);
-  --radius-sm: var(--radius-sm);
-  --table-cell-padding: 12px 16px;
-}
-
-/* Global resets and base styles remain untouched */
-*,
-*::before,
-*::after {
-  box-sizing: border-box;
-  margin: 0;
-  padding: 0;
-}
-
-/* Scrollbar using tokens */
-::-webkit-scrollbar {
-  width: var(--scrollbar-width);
-}
-
-::-webkit-scrollbar-track {
-  background: var(--scrollbar-track);
-}
-
-::-webkit-scrollbar-thumb {
-  background: var(--scrollbar-thumb);
+  background: var(--scrollbar-thumb, var(--border));
   border-radius: 3px;
 }
 
@@ -1037,7 +534,6 @@
   border: 1px solid var(--border);
   border-radius: var(--radius);
   overflow: visible;
-  /* MUST be visible so portalled dropdowns show */
   position: relative;
 }
 
@@ -2168,6 +1664,12 @@ body>.actions-menu-dropdown {
   }
 }
 
+/* =============================================
+   ENHANCED COMPONENTS — Professional ERP Style
+   (Overriding base variants from earlier in the cascade)
+   ============================================= */
+
+/* Action Menu Overrides */
 .action-menu-trigger {
   width: 36px;
   height: 36px;
@@ -2207,11 +1709,7 @@ body>.actions-menu-dropdown {
   background: #1a2233;
 }
 
-/* =============================================
-   ENHANCED BUTTONS — Professional ERP Style
-   ============================================= */
-
-/* Base button improvements */
+/* Enhanced Buttons */
 .btn {
   display: inline-flex;
   align-items: center;
@@ -2239,7 +1737,6 @@ body>.actions-menu-dropdown {
   transform: scale(0.98);
 }
 
-/* Primary button with shadow and hover lift */
 .btn-primary {
   background: var(--accent);
   color: #0b0f14;
@@ -2258,7 +1755,6 @@ body>.actions-menu-dropdown {
   outline-offset: 2px;
 }
 
-/* Secondary button */
 .btn-secondary {
   background: var(--bg-elevated);
   color: var(--text-primary);
@@ -2273,7 +1769,6 @@ body>.actions-menu-dropdown {
   transform: translateY(-1px);
 }
 
-/* Danger button */
 .btn-danger {
   background: rgba(248, 113, 113, 0.1);
   color: var(--red);
@@ -2286,7 +1781,6 @@ body>.actions-menu-dropdown {
   box-shadow: 0 4px 12px rgba(248, 113, 113, 0.2);
 }
 
-/* Ghost button improvements */
 .btn-ghost {
   background: transparent;
   color: var(--text-secondary);
@@ -2298,7 +1792,6 @@ body>.actions-menu-dropdown {
   background: var(--bg-elevated);
 }
 
-/* Minimal button */
 .btn-minimal {
   background: transparent;
   color: var(--text-secondary);
@@ -2311,7 +1804,6 @@ body>.actions-menu-dropdown {
   background: transparent;
 }
 
-/* Button size variants */
 .btn-sm {
   padding: 6px 12px;
   font-size: 0.75rem;
@@ -2322,7 +1814,6 @@ body>.actions-menu-dropdown {
   font-size: 0.875rem;
 }
 
-/* Button loading state */
 .btn--loading {
   position: relative;
   color: transparent;
@@ -2343,16 +1834,7 @@ body>.actions-menu-dropdown {
   animation: spin 0.8s linear infinite;
 }
 
-@keyframes spin {
-  to {
-    transform: rotate(360deg);
-  }
-}
-
-/* =============================================
-   ENHANCED ACTION MENUS — Standard Component
-   ============================================= */
-
+/* Enhanced Action Menus */
 .actions-menu-trigger {
   display: inline-flex;
   align-items: center;
@@ -2407,7 +1889,6 @@ body>.actions-menu-dropdown {
     opacity: 0;
     transform: scale(0.94) translateY(-6px);
   }
-
   100% {
     opacity: 1;
     transform: scale(1) translateY(0);
@@ -2482,10 +1963,7 @@ body>.actions-menu-dropdown {
   margin: 4px 2px;
 }
 
-/* =============================================
-   ENHANCED FORMS — Professional Input
-   ============================================= */
-
+/* Enhanced Forms */
 .form-group {
   display: flex;
   flex-direction: column;
@@ -2557,7 +2035,6 @@ body>.actions-menu-dropdown {
   font-family: 'Inter', sans-serif;
 }
 
-/* Enhanced select styling */
 .form-select {
   appearance: none;
   cursor: pointer;
@@ -2619,11 +2096,7 @@ body>.actions-menu-dropdown {
   margin-top: 8px;
 }
 
-/* =============================================
-   ENHANCED TABLES — Professional Data Display
-   ============================================= */
-
-/* AFTER - CORRECT */
+/* Enhanced Tables */
 .table-wrapper {
   background: var(--bg-surface);
   border: 1px solid var(--border-light);
@@ -2702,7 +2175,6 @@ body>.actions-menu-dropdown {
   text-align: right;
 }
 
-/* Table content styling */
 .mono-tag {
   font-family: 'Courier New', monospace;
   font-size: 0.75rem;
@@ -2767,7 +2239,6 @@ body>.actions-menu-dropdown {
   color: var(--text-muted);
 }
 
-/* Loading skeleton for tables */
 .table-skeleton {
   padding: 16px;
 }
@@ -2788,16 +2259,12 @@ body>.actions-menu-dropdown {
   0% {
     background-position: 200% 0;
   }
-
   100% {
     background-position: -200% 0;
   }
 }
 
-/* =============================================
-   ENHANCED MODALS — Professional Overlay
-   ============================================= */
-
+/* Enhanced Modals */
 .modal-overlay {
   position: fixed;
   inset: 0;
@@ -2809,16 +2276,6 @@ body>.actions-menu-dropdown {
   z-index: 50;
   padding: 16px;
   animation: fade-in 0.2s cubic-bezier(0.4, 0, 0.2, 1);
-}
-
-@keyframes fade-in {
-  from {
-    opacity: 0;
-  }
-
-  to {
-    opacity: 1;
-  }
 }
 
 .modal-card {
@@ -2835,18 +2292,6 @@ body>.actions-menu-dropdown {
 
 .modal-card--lg {
   max-width: 600px;
-}
-
-@keyframes modal-rise {
-  from {
-    opacity: 0;
-    transform: translateY(12px) scale(0.98);
-  }
-
-  to {
-    opacity: 1;
-    transform: translateY(0) scale(1);
-  }
 }
 
 .modal-header {
@@ -2914,10 +2359,7 @@ body>.actions-menu-dropdown {
   border-radius: 0 0 10px 10px;
 }
 
-/* =============================================
-   ENHANCED CARDS — Premium Dashboard
-   ============================================= */
-
+/* Enhanced Cards */
 .stat-card {
   position: relative;
   background: var(--bg-surface);
@@ -2990,10 +2432,7 @@ body>.actions-menu-dropdown {
   color: var(--text-muted);
 }
 
-/* =============================================
-   ENHANCED ALERTS & BADGES
-   ============================================= */
-
+/* Enhanced Alerts */
 .alert {
   display: flex;
   align-items: flex-start;
@@ -3003,18 +2442,6 @@ body>.actions-menu-dropdown {
   font-size: 0.8125rem;
   border: 1px solid;
   animation: slide-in 0.2s cubic-bezier(0.4, 0, 0.2, 1);
-}
-
-@keyframes slide-in {
-  from {
-    opacity: 0;
-    transform: translateY(-8px);
-  }
-
-  to {
-    opacity: 1;
-    transform: translateY(0);
-  }
 }
 
 .error-banner {
@@ -3044,10 +2471,7 @@ body>.actions-menu-dropdown {
   justify-content: space-between;
 }
 
-/* =============================================
-   ENHANCED SEARCH INPUT
-   ============================================= */
-
+/* Enhanced Search Input */
 .search-input {
   width: 100%;
   padding: 10px 12px 10px 36px;
@@ -3077,10 +2501,7 @@ body>.actions-menu-dropdown {
   box-shadow: 0 0 0 2px rgba(74, 222, 128, 0.1);
 }
 
-/* =============================================
-   ENHANCED EMPTY STATES
-   ============================================= */
-
+/* Enhanced Empty States */
 .empty-state {
   display: flex;
   flex-direction: column;
@@ -3113,10 +2534,7 @@ body>.actions-menu-dropdown {
   margin-top: 8px;
 }
 
-/* =============================================
-   PAGE STRUCTURE ENHANCEMENTS
-   ============================================= */
-
+/* Page Structure Enhancements */
 .page-header {
   display: flex;
   align-items: center;
@@ -3158,87 +2576,7 @@ body>.actions-menu-dropdown {
   margin-bottom: 16px;
 }
 
-/* =============================================
-   RESPONSIVE — BUTTONS & FORMS (Mobile)
-   ============================================= */
-
-@media (max-width: 768px) {
-  .form-grid {
-    grid-template-columns: 1fr;
-    gap: 12px;
-  }
-
-  .form-input,
-  .form-select,
-  .form-textarea {
-    padding: 12px 14px;
-    font-size: 16px;
-    /* Prevents zoom on iOS */
-  }
-
-  .btn {
-    padding: 12px 16px;
-    width: 100%;
-  }
-
-  .form-actions {
-    flex-direction: column-reverse;
-    gap: 10px;
-  }
-
-  .form-actions .btn {
-    width: 100%;
-  }
-
-  .modal-card,
-  .modal-card--lg {
-    max-width: 95%;
-    max-height: 90vh;
-  }
-
-  .data-table {
-    font-size: 0.75rem;
-  }
-
-  .data-table th,
-  .data-table td {
-    padding: 10px 8px;
-  }
-
-  .actions-menu-dropdown {
-    right: auto;
-    left: 0;
-  }
-}
-
-@media (max-width: 480px) {
-  .page-header {
-    flex-direction: column;
-    align-items: stretch;
-  }
-
-  .page-header>div:last-child {
-    flex-direction: column;
-  }
-
-  .btn {
-    font-size: 0.875rem;
-  }
-
-  .stat-card {
-    padding: 16px;
-  }
-
-  .page-count-badge {
-    width: 100%;
-    justify-content: center;
-  }
-}
-
-/* =============================================
-   UNIT SELECTOR — Professional Styling
-   ============================================= */
-
+/* Unit Selector */
 .unit-selector-wrapper {
   display: flex;
   align-items: center;
@@ -3290,42 +2628,21 @@ body>.actions-menu-dropdown {
   outline-offset: -1px;
 }
 
-/* Responsive */
-@media (max-width: 768px) {
-  .unit-selector-wrapper {
-    padding: 6px 10px;
-    gap: 6px;
-  }
-
-  .unit-selector {
-    font-size: 0.75rem;
-    min-width: 70px;
-  }
-
-  .unit-selector-label {
-    font-size: 0.7rem;
-  }
-}
-
 /* =============================================
-   RESPONSIVE — TABLE (Mobile & Tablet)
+   ENHANCED RESPONSIVENESS
    ============================================= */
-
 @media (max-width: 1024px) {
   .table-wrapper {
     overflow: visible;
     position: relative;
   }
-
   .table-scroll {
     overflow-x: auto;
     -webkit-overflow-scrolling: touch;
   }
-
   .data-table {
     min-width: 800px;
   }
-
   .actions-menu-dropdown {
     position: fixed;
     right: auto;
@@ -3335,77 +2652,118 @@ body>.actions-menu-dropdown {
 }
 
 @media (max-width: 768px) {
-  .table-wrapper {
-    border-radius: 6px;
-    border: 1px solid var(--border-light);
+  .form-grid {
+    grid-template-columns: 1fr;
+    gap: 12px;
   }
-
+  .form-input,
+  .form-select,
+  .form-textarea {
+    padding: 12px 14px;
+    font-size: 16px; /* Prevents zoom on iOS */
+  }
+  .btn {
+    padding: 12px 16px;
+    width: 100%;
+  }
+  .form-actions {
+    flex-direction: column-reverse;
+    gap: 10px;
+  }
+  .form-actions .btn {
+    width: 100%;
+  }
+  .modal-card,
+  .modal-card--lg {
+    max-width: 95%;
+    max-height: 90vh;
+  }
   .data-table {
     min-width: 600px;
     font-size: 0.75rem;
   }
-
-  .data-table th {
-    padding: 10px 8px;
-    font-size: 0.65rem;
-  }
-
+  .data-table th,
   .data-table td {
     padding: 10px 8px;
   }
-
+  .data-table th {
+    font-size: 0.65rem;
+  }
+  .actions-menu-dropdown {
+    right: auto;
+    left: 0;
+  }
   .actions-menu-trigger {
     width: 28px;
     height: 28px;
     padding: 0;
     font-size: 1rem;
   }
-
   .actions-menu-dropdown {
     min-width: 160px;
     right: -20px;
   }
-
   .search-input {
     width: 100%;
     padding: 8px 10px 8px 32px;
   }
-
   .page-count-badge {
+    font-size: 0.7rem;
+  }
+  .unit-selector-wrapper {
+    padding: 6px 10px;
+    gap: 6px;
+  }
+  .unit-selector {
+    font-size: 0.75rem;
+    min-width: 70px;
+  }
+  .unit-selector-label {
     font-size: 0.7rem;
   }
 }
 
 @media (max-width: 480px) {
+  .page-header {
+    flex-direction: column;
+    align-items: stretch;
+  }
+  .page-header>div:last-child {
+    flex-direction: column;
+  }
+  .btn {
+    font-size: 0.875rem;
+  }
+  .stat-card {
+    padding: 16px;
+  }
+  .page-count-badge {
+    width: 100%;
+    justify-content: center;
+  }
   .table-wrapper {
     border-radius: 4px;
   }
-
   .data-table {
     min-width: 500px;
     font-size: 0.7rem;
   }
-
   .data-table th {
     padding: 8px 6px;
     font-size: 0.6rem;
     letter-spacing: 0.02em;
   }
-
   .data-table td {
     padding: 8px 6px;
   }
-
   .row-num {
     width: 30px;
   }
-
   .actions-menu-trigger {
     width: 24px;
     height: 24px;
     font-size: 0.9rem;
   }
-
   .actions-menu-item {
     padding: 8px 10px;
     font-size: 0.75rem;

@@ -7,11 +7,19 @@ import { useAuth } from '../context/AuthContext';
 
 interface Shareholder {
   id: number;
-  shareholder_name: string;
-  email: string;
-  mobile_number: string;
-  organization_id: number;
+  shareholder_no: string;
+  share_certificate_no?: string;
+  share_count: number;
+  share_value: number;
+  total_share_capital: number;
+  joining_date: string;
   is_active: boolean;
+  farmer_id: number;
+  farmer_name: string;
+  farmer_mobile?: string;
+  organization_id: number;
+  created_at: string;
+  updated_at?: string;
 }
 
 export default function Shareholders() {
@@ -50,9 +58,9 @@ export default function Shareholders() {
   }, []);
 
   const filtered = shareholders.filter(s =>
-  (s.shareholder_name ?? '').toLowerCase().includes(search.toLowerCase()) ||
-  (s.email ?? '').toLowerCase().includes(search.toLowerCase()) ||
-  (s.mobile_number ?? '').includes(search)
+    (s.farmer_name ?? '').toLowerCase().includes(search.toLowerCase()) ||
+    (s.shareholder_no ?? '').toLowerCase().includes(search.toLowerCase()) ||
+    (s.farmer_mobile ?? '').includes(search)
   );
 
   const handleEdit = (shareholder: Shareholder) => {
@@ -107,7 +115,7 @@ export default function Shareholders() {
           <input
             type="text"
             className="search-input"
-            placeholder="Search shareholders..."
+            placeholder="Search shareholders by farmer name or mobile..."
             value={search}
             onChange={(e) => setSearch(e.target.value)}
           />
@@ -129,10 +137,11 @@ export default function Shareholders() {
                 <thead>
                   <tr>
                     <th className="w-12">#</th>
-                    <th>Name</th>
-                    <th>Email</th>
+                    <th>Farmer Name</th>
+                    <th>SH No</th>
                     <th>Mobile</th>
-                    <th>Organization</th>
+                    <th>Share Count</th>
+                    <th>Share Value</th>
                     <th>Status</th>
                     <th className="w-20 text-right">Actions</th>
                   </tr>
@@ -140,7 +149,7 @@ export default function Shareholders() {
                 <tbody>
                   {filtered.length === 0 ? (
                     <tr>
-                      <td colSpan={7} className="empty-row">
+                      <td colSpan={8} className="empty-row">
                         {search ? 'No matching shareholders found.' : 'No shareholders found.'}
                       </td>
                     </tr>
@@ -157,14 +166,15 @@ export default function Shareholders() {
                                 color: `rgb(74, 222, 128)`
                               }}
                             >
-                              {getInitials(s.shareholder_name)}
+                              {getInitials(s.farmer_name ?? '')}
                             </div>
-                            <span className="primary-cell font-medium">{s.shareholder_name}</span>
+                            <span className="primary-cell font-medium">{s.farmer_name ?? '—'}</span>
                           </div>
                         </td>
-                        <td><span className="mono-tag">{s.email}</span></td>
-                        <td className="text-sm text-gray-400">{s.mobile_number}</td>
-                        <td className="text-sm text-gray-400">Org {s.organization_id}</td>
+                        <td><span className="mono-tag">{s.shareholder_no ?? '—'}</span></td>
+                        <td className="text-sm text-gray-400">{s.farmer_mobile ?? '—'}</td>
+                        <td className="text-sm font-medium">{s.share_count}</td>
+                        <td className="text-sm text-gray-400">₹{Number(s.share_value).toFixed(2)}</td>
                         <td>
                           <span className={`status-pill ${s.is_active ? 'status-pill--active' : 'status-pill--inactive'}`}>
                             {s.is_active ? 'Active' : 'Inactive'}
@@ -231,8 +241,7 @@ export default function Shareholders() {
               </div>
               <div className="modal-body">
                 <ShareholderForm
-                  initialData={editingShareholder ?? undefined}
-                  isSuperAdmin={isSuperAdmin}
+                  initialData={editingShareholder}
                   onSubmit={async (data) => {
                     try {
                       if (editingShareholder?.id) {

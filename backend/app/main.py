@@ -13,6 +13,10 @@ from app.api.shareholders import router as shareholders_router
 from app.api.crop_masters import router as crop_masters_router
 from app.api.farmer_crops import router as farmer_crops_router
 from app.api.procurement import router as procurement_router
+# Add to imports
+from app.routers import payment
+from app.api.inventory import router as inventory_router
+
 
 app = FastAPI(
     title="FPO360 ERP",
@@ -33,7 +37,8 @@ app.include_router(shareholders_router)
 app.include_router(crop_masters_router)
 app.include_router(farmer_crops_router)
 app.include_router(procurement_router)
-
+app.include_router(payment.router)
+app.include_router(inventory_router)
 
 @app.get("/")
 def home():

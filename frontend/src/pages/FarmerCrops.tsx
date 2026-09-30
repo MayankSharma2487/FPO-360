@@ -10,8 +10,13 @@ interface FarmerCrop {
   farmer_name: string;
   crop_id: number;
   crop_name: string;
-  acreage: number;
+  area_acres?: number;
+  season?: string;
+  year: number;
+  organization_id: number;
   is_active: boolean;
+  created_at: string;
+  updated_at?: string;
 }
 
 export default function FarmerCrops() {
@@ -21,7 +26,7 @@ export default function FarmerCrops() {
   const [success, setSuccess] = useState<string | null>(null);
   const [search, setSearch] = useState('');
   const [showForm, setShowForm] = useState(false);
-  const [editingRecord, setEditingRecord] = useState<Partial<FarmerCrop> | null>(null);
+  const [editingRecord, setEditingRecord] = useState<Partial<FarmerCrop> | undefined>(undefined);
 
   const getInitials = (name: string) => {
     if (!name) return '?';
@@ -86,7 +91,7 @@ export default function FarmerCrops() {
               {activeCount} of {farmerCrops.length} active
             </div>
             <button 
-              onClick={() => { setEditingRecord(null); setShowForm(true); }} 
+              onClick={() => { setEditingRecord(undefined); setShowForm(true); }} 
               className="btn btn-primary"
             >
               <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
@@ -102,7 +107,7 @@ export default function FarmerCrops() {
           <input
             type="text"
             className="search-input"
-            placeholder="Search farmer crops..."
+            placeholder="Search farmer crops by farmer or crop name..."
             value={search}
             onChange={(e) => setSearch(e.target.value)}
           />
@@ -126,7 +131,9 @@ export default function FarmerCrops() {
                     <th className="w-12">#</th>
                     <th>Farmer</th>
                     <th>Crop</th>
-                    <th>Acreage</th>
+                    <th>Area (Acres)</th>
+                    <th>Season</th>
+                    <th>Year</th>
                     <th>Status</th>
                     <th className="w-20 text-right">Actions</th>
                   </tr>
@@ -134,7 +141,7 @@ export default function FarmerCrops() {
                 <tbody>
                   {filtered.length === 0 ? (
                     <tr>
-                      <td colSpan={6} className="empty-row">
+                      <td colSpan={8} className="empty-row">
                         {search ? 'No matching records found.' : 'No farmer crops found.'}
                       </td>
                     </tr>
@@ -151,13 +158,15 @@ export default function FarmerCrops() {
                                 color: `rgb(74, 222, 128)`
                               }}
                             >
-                              {getInitials(fc.farmer_name)}
+                              {getInitials(fc.farmer_name ?? '')}
                             </div>
-                            <span className="primary-cell font-medium">{fc.farmer_name}</span>
+                            <span className="primary-cell font-medium">{fc.farmer_name ?? '—'}</span>
                           </div>
                         </td>
-                        <td><span className="mono-tag">{fc.crop_name}</span></td>
-                        <td className="text-sm text-gray-400">{fc.acreage} ac</td>
+                        <td><span className="mono-tag">{fc.crop_name ?? '—'}</span></td>
+                        <td className="text-sm font-medium">{fc.area_acres ?? '—'}</td>
+                        <td className="text-sm text-gray-400">{fc.season ?? '—'}</td>
+                        <td className="text-sm text-gray-400">{fc.year ?? '—'}</td>
                         <td>
                           <span className={`status-pill ${fc.is_active ? 'status-pill--active' : 'status-pill--inactive'}`}>
                             {fc.is_active ? 'Active' : 'Inactive'}
@@ -224,7 +233,7 @@ export default function FarmerCrops() {
               </div>
               <div className="modal-body">
                 <FarmerCropForm
-                  initialData={editingRecord ?? undefined}
+                  initialData={editingRecord}
                   onSubmit={async (data) => {
                     try {
                       if (editingRecord?.id) {
