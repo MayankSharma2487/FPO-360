@@ -16,6 +16,8 @@ from app.api.procurement import router as procurement_router
 # Add to imports
 from app.routers import payment
 from app.api.inventory import router as inventory_router
+from app.api.customers import router as customers_router
+from app.api.sales import router as sales_router
 
 
 app = FastAPI(
@@ -39,6 +41,8 @@ app.include_router(farmer_crops_router)
 app.include_router(procurement_router)
 app.include_router(payment.router)
 app.include_router(inventory_router)
+app.include_router(customers_router)
+app.include_router(sales_router)
 
 @app.get("/")
 def home():

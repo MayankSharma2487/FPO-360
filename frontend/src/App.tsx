@@ -22,6 +22,7 @@ import PaymentDetail from './pages/PaymentDetail';
 import PaymentReceipt from './pages/PaymentReceipt';
 import Inventory from './pages/Inventory';
 import InventoryLedger from './pages/InventoryLedger';
+import Sales from './pages/Sales';
 
 function ComingSoon({ page }: { page: string }) {
   return (
@@ -83,7 +84,7 @@ export default function App() {
             {/* Future Modules */}
             <Route path="inventory" element={<Inventory />} />
             <Route path="inventory/:cropId" element={<InventoryLedger />} />
-            <Route path="sales" element={<ComingSoon page="Sales" />} />
+            <Route path="sales" element={<Sales />} />
             <Route path="finance" element={<ComingSoon page="Finance" />} />
             <Route path="licenses" element={<ComingSoon page="Licenses" />} />
             <Route path="reports" element={<ComingSoon page="Reports" />} />
