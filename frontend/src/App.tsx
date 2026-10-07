@@ -23,6 +23,12 @@ import PaymentReceipt from './pages/PaymentReceipt';
 import Inventory from './pages/Inventory';
 import InventoryLedger from './pages/InventoryLedger';
 import Sales from './pages/Sales';
+import Finance from './pages/Finance';
+import FinancialYears from './pages/FinancialYears';
+import ChartOfAccounts from './pages/ChartOfAccounts';
+import Journals from './pages/Journals';
+import GeneralLedger from './pages/GeneralLedger';
+import TrialBalance from './pages/TrialBalance';
 
 function ComingSoon({ page }: { page: string }) {
   return (
@@ -85,7 +91,12 @@ export default function App() {
             <Route path="inventory" element={<Inventory />} />
             <Route path="inventory/:cropId" element={<InventoryLedger />} />
             <Route path="sales" element={<Sales />} />
-            <Route path="finance" element={<ComingSoon page="Finance" />} />
+            <Route path="finance" element={<Finance />} />
+            <Route path="finance/years" element={<FinancialYears />} />
+            <Route path="finance/accounts" element={<ChartOfAccounts />} />
+            <Route path="finance/journals" element={<Journals />} />
+            <Route path="finance/general-ledger" element={<GeneralLedger />} />
+            <Route path="finance/trial-balance" element={<TrialBalance />} />
             <Route path="licenses" element={<ComingSoon page="Licenses" />} />
             <Route path="reports" element={<ComingSoon page="Reports" />} />
             <Route path="settings" element={<ComingSoon page="Settings" />} />
