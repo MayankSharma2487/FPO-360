@@ -26,6 +26,7 @@ from app.models.master_block import MasterBlock
 from app.models.financial_year import FinancialYear
 from app.models.account import Account
 from app.models.journal import JournalEntry, JournalLine
+from app.models.license import License
 
 config = context.config
 

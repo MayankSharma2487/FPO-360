@@ -24,7 +24,7 @@ const NAV_ITEMS: NavItem[] = [
   { label: 'Inventory',     path: '/inventory',     icon: '▣', roles: ['FPO Admin'] },
   { label: 'Sales',         path: '/sales',         icon: '◆', roles: ['FPO Admin', 'Accountant'] },
   { label: 'Finance',       path: '/finance',       icon: '◐', roles: ['Super Admin', 'FPO Admin', 'Accountant', 'Manager', 'Viewer'] },
-  { label: 'Licenses',      path: '/licenses',      icon: '▢', roles: ['FPO Admin'] },
+  { label: 'Licenses',      path: '/licenses',      icon: '▢', roles: ['Super Admin', 'FPO Admin', 'Manager', 'Accountant', 'Viewer'] },
   { label: 'Reports',       path: '/reports',       icon: '▤', roles: ['Super Admin', 'FPO Admin', 'Manager', 'Accountant', 'Viewer'] },
   { label: 'Settings',      path: '/settings',      icon: '◌', roles: ['Super Admin', 'FPO Admin'] },
 

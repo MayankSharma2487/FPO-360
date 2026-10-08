@@ -23,6 +23,8 @@ from app.api.financial_years import router as financial_years_router
 from app.api.finance_accounts import router as finance_accounts_router
 from app.api.finance_journals import router as finance_journals_router
 from app.api.finance_reports import router as finance_reports_router
+from app.api.licenses import router as licenses_router
+from app.api.reports import router as reports_router
 
 
 app = FastAPI(
@@ -53,6 +55,8 @@ app.include_router(financial_years_router)
 app.include_router(finance_accounts_router)
 app.include_router(finance_journals_router)
 app.include_router(finance_reports_router)
+app.include_router(licenses_router)
+app.include_router(reports_router)
 
 @app.get("/")
 def home():
