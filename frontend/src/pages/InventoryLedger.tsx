@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { RoleGuard } from '../components/RoleGuard';
-import { inventoryService, InventoryLedgerEntry } from '../services/inventoryService';
+import { inventoryService, InventoryLedgerEntry, BaseUnit, DecimalValue } from '../services/inventoryService';
 import { getApiErrorMessage } from '../utils/errors';
 
 function formatDate(value: string): string {
@@ -18,8 +18,11 @@ function formatDate(value: string): string {
   }
 }
 
-function formatKg(v: number): string {
-  return (Number(v) || 0).toLocaleString('en-IN', { maximumFractionDigits: 2 }) + ' KG';
+function formatQuantity(v: DecimalValue, unit: BaseUnit): string {
+  const [integerPart, fractionalPart = ''] = String(v || '0').split('.');
+  const groupedInteger = integerPart.replace(/\B(?=(\d{3})+(?!\d))/g, ',');
+  const trimmedFraction = fractionalPart.replace(/0+$/, '');
+  return `${groupedInteger}${trimmedFraction ? `.${trimmedFraction}` : ''} ${unit}`;
 }
 
 export default function InventoryLedger() {
@@ -46,10 +49,12 @@ export default function InventoryLedger() {
     load();
   }, [cropId]);
 
-  const cropName = entries[0]?.crop_name ?? `Crop #${cropId}`;
+  const itemName = entries[0]?.item_name ?? `Item #${cropId}`;
+  const itemType = entries[0]?.item_type;
+  const baseUnit = entries[0]?.base_unit ?? 'KG';
 
   return (
-    <RoleGuard allowedRoles={['Super Admin', 'FPO Admin', 'Manager', 'Accountant', 'Viewer']}>
+    <RoleGuard allowedRoles={['FPO Admin', 'Manager', 'Accountant', 'Viewer']}>
       <div className="page-wrapper">
         <div className="page-header">
           <div>
@@ -60,8 +65,8 @@ export default function InventoryLedger() {
             >
               ← Back to Inventory
             </button>
-            <h2 className="page-title">Ledger — {cropName}</h2>
-            <p className="page-subtitle">All inventory movements for this crop</p>
+            <h2 className="page-title">Ledger — {itemName}</h2>
+            <p className="page-subtitle">{itemType ? `${itemType.replace(/_/g, ' ')} · ${baseUnit}` : `All inventory movements · ${baseUnit}`}</p>
           </div>
           <div className="page-count-badge">
             {entries.length} entr{entries.length === 1 ? 'y' : 'ies'}
@@ -113,11 +118,9 @@ export default function InventoryLedger() {
                             {e.transaction_type}
                           </span>
                         </td>
+                        <td><span style={{ fontWeight: 600 }}>{formatQuantity(e.quantity, e.base_unit ?? baseUnit)}</span></td>
                         <td>
-                          <span style={{ fontWeight: 600 }}>{formatKg(e.quantity)}</span>
-                        </td>
-                        <td>
-                          <span className="mono-tag">{e.reference_type}</span>
+                            <span className="mono-tag">{e.reverses_id ? 'REVERSAL' : e.reference_type}</span>
                         </td>
                         <td>
                           {e.reference_id != null ? (
@@ -131,13 +134,7 @@ export default function InventoryLedger() {
                             {e.remarks ?? '—'}
                           </span>
                         </td>
-                        <td>
-                          <span
-                            className={`status-pill ${e.is_active ? 'status-pill--active' : 'status-pill--inactive'}`}
-                          >
-                            {e.is_active ? 'Active' : 'Inactive'}
-                          </span>
-                        </td>
+                        <td><span className={`status-pill ${e.is_active ? 'status-pill--active' : 'status-pill--inactive'}`}>{e.is_active ? 'Posted' : 'Legacy inactive'}</span>{e.reverses_id != null && <div className="text-sm text-gray-400">Reverses #{e.reverses_id}</div>}</td>
                       </tr>
                     ))
                   )}

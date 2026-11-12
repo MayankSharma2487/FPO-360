@@ -5,7 +5,9 @@ export const salesService = {
 
   getSaleById: (id: number) => api.get(`/sales/${id}`),
 
-  createSale: (data: any) => api.post('/sales/', data),
+  createSale: (data: any, idempotencyKey: string) => api.post('/sales/', data, {
+    headers: { 'Idempotency-Key': idempotencyKey },
+  }),
 
   updateSale: (id: number, data: any) => api.put(`/sales/${id}`, data),
 

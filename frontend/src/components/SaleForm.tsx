@@ -18,16 +18,11 @@ export function SaleForm({ initialData, onSubmit, onCancel }: SaleFormProps) {
   const [showCustomerForm, setShowCustomerForm] = useState(false);
 
   /**
-   * REVERSE CONVERT: Convert KG storage value to display unit
-   * Backend stores quantity in KG. For edit, show original unit amount.
+   * Reverse-convert the stored item-base quantity into the sale's display unit.
    */
-  const getReverseConvertedQuantity = (storedQuantityInKg: number, unit: string): number => {
-    if (unit === 'QUINTAL') {
-      return storedQuantityInKg / 100;
-    } else if (unit === 'TON') {
-      return storedQuantityInKg / 1000;
-    }
-    return storedQuantityInKg;
+  const getReverseConvertedQuantity = (storedQuantityInBase: number, unit: string, baseUnit = 'KG'): number => {
+    const factors: Record<string, number> = { G: 0.001, KG: 1, QUINTAL: 100, TON: 1000, ML: 0.001, L: 1, PCS: 1 };
+    return storedQuantityInBase * (factors[baseUnit] || 1) / (factors[unit] || 1);
   };
 
   const [formData, setFormData] = useState({
@@ -37,7 +32,7 @@ export function SaleForm({ initialData, onSubmit, onCancel }: SaleFormProps) {
     customer_id: initialData?.customer_id || '',
     crop_id: initialData?.crop_id || '',
     quantity: initialData?.quantity != null
-      ? getReverseConvertedQuantity(Number(initialData.quantity), initialData.unit || 'KG').toString()
+      ? getReverseConvertedQuantity(Number(initialData.quantity), initialData.unit || 'KG', initialData.base_unit || 'KG').toString()
       : '',
     unit: initialData?.unit || 'KG',
     rate_per_unit: initialData?.rate_per_unit != null ? String(initialData.rate_per_unit) : '',
@@ -50,10 +45,10 @@ export function SaleForm({ initialData, onSubmit, onCancel }: SaleFormProps) {
     try {
       const [customerRes, cropRes] = await Promise.all([
         customerService.getActiveCustomers(),
-        cropMasterService.getCropMasters(),
+        cropMasterService.getItems({ is_active: 'true' }),
       ]);
       setCustomers(customerRes.data || []);
-      setCrops(cropRes.data || []);
+      setCrops((cropRes.data || []).filter((item: any) => ['AGRICULTURAL_COMMODITY', 'FINISHED_GOOD'].includes(item.item_type)));
     } catch {
       setError('Failed to load form options');
     } finally {
@@ -185,24 +180,27 @@ export function SaleForm({ initialData, onSubmit, onCancel }: SaleFormProps) {
         </div>
 
         <div className="form-group">
-          <label className="form-label form-label-required">Crop</label>
+          <label className="form-label form-label-required">Crop or finished product</label>
           <select
             className="form-select"
             value={formData.crop_id}
-            onChange={(e) =>
-              setFormData({
-                ...formData,
-                crop_id: e.target.value ? Number(e.target.value) : '',
-              })
-            }
+              onChange={(e) => {
+                const item = crops.find((candidate: any) => candidate.id === Number(e.target.value));
+                setFormData({
+                  ...formData,
+                  crop_id: item?.id ?? '',
+                  unit: item?.base_unit ?? 'KG',
+                  quantity: '',
+                });
+              }}
             required
           >
-            <option value="">Select Crop...</option>
+            <option value="">Select crop or finished product...</option>
             {crops
               .filter((c) => c.is_active !== false)
               .map((c) => (
                 <option key={c.id} value={c.id}>
-                  {c.crop_name} ({c.crop_code})
+                  {c.item_name} ({c.item_code}) · {c.item_type === 'FINISHED_GOOD' ? 'Finished good' : 'Agricultural commodity'}
                 </option>
               ))}
           </select>
@@ -212,7 +210,7 @@ export function SaleForm({ initialData, onSubmit, onCancel }: SaleFormProps) {
           <label className="form-label form-label-required">Quantity</label>
           <input
             type="number"
-            step="0.01"
+            step="0.000001"
             className="form-input"
             value={formData.quantity}
             onChange={(e) => setFormData({ ...formData, quantity: e.target.value })}
@@ -229,9 +227,12 @@ export function SaleForm({ initialData, onSubmit, onCancel }: SaleFormProps) {
             onChange={(e) => setFormData({ ...formData, unit: e.target.value })}
             required
           >
-            <option value="KG">KG (Kilogram)</option>
-            <option value="QUINTAL">QT (Quintal)</option>
-            <option value="TON">MT (Metric Ton)</option>
+            {(crops.find((item: any) => item.id === Number(formData.crop_id))?.base_unit === 'PCS'
+              ? ['PCS']
+              : ['G', 'KG', 'QUINTAL', 'TON'].includes(crops.find((item: any) => item.id === Number(formData.crop_id))?.base_unit)
+                ? ['G', 'KG', 'QUINTAL', 'TON']
+                : ['ML', 'L']
+            ).map(unit => <option key={unit} value={unit}>{unit}</option>)}
           </select>
         </div>
 

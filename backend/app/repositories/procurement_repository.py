@@ -26,6 +26,11 @@ class ProcurementRepository:
             joinedload(Procurement.farmer),
             joinedload(Procurement.crop)
         ).filter(Procurement.id == procurement_id).first()
+
+    def get_by_id_for_update(self, procurement_id: int) -> Optional[Procurement]:
+        return self.db.query(Procurement).filter(
+            Procurement.id == procurement_id
+        ).with_for_update().populate_existing().first()
     def get_latest_by_org(self, organization_id: int) -> Optional[Procurement]:
         return (
             self.db.query(Procurement)

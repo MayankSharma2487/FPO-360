@@ -242,6 +242,7 @@ export default function Shareholders() {
               <div className="modal-body">
                 <ShareholderForm
                   initialData={editingShareholder}
+                  isSuperAdmin={isSuperAdmin}
                   onSubmit={async (data) => {
                     try {
                       if (editingShareholder?.id) {

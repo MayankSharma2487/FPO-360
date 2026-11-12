@@ -1,4 +1,4 @@
-from fastapi import APIRouter, Depends, status
+from fastapi import APIRouter, Depends, Header, status
 from sqlalchemy.orm import Session
 
 from app.database.database import get_db
@@ -16,11 +16,15 @@ router = APIRouter(
 @router.post("/", response_model=SaleResponse, status_code=status.HTTP_201_CREATED)
 def create_sale(
     payload: SaleCreate,
+    idempotency_key: str | None = Header(
+        None, alias="Idempotency-Key", min_length=1, max_length=128,
+        description="Same organization and endpoint plus same payload replays the result; changed payload conflicts. Optional for legacy clients, which remain non-idempotent without a key.",
+    ),
     db: Session = Depends(get_db),
     current_user: User = Depends(require_roles("Super Admin", "FPO Admin", "Manager")),
 ):
     service = SaleService(db)
-    return service.create_sale(payload, current_user)
+    return service.create_sale(payload, current_user, idempotency_key)
 
 
 @router.get("/", response_model=list[SaleResponse])
@@ -63,6 +67,8 @@ def get_sale(
         "updated_at": sale.updated_at,
         "customer_name": sale.customer.customer_name if sale.customer else "—",
         "crop_name": sale.crop.crop_name if sale.crop else "—",
+        "item_type": sale.crop.item_type if sale.crop else None,
+        "base_unit": sale.crop.base_unit if sale.crop else None,
     }
 
 

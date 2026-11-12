@@ -31,6 +31,8 @@ import GeneralLedger from './pages/GeneralLedger';
 import TrialBalance from './pages/TrialBalance';
 import Licenses from './pages/Licenses';
 import Reports from './pages/Reports';
+import Settings from './pages/Settings';
+import Production from './pages/Production';
 
 function ComingSoon({ page }: { page: string }) {
   return (
@@ -101,7 +103,8 @@ export default function App() {
             <Route path="finance/trial-balance" element={<TrialBalance />} />
             <Route path="licenses" element={<Licenses />} />
             <Route path="reports" element={<Reports />} />
-            <Route path="settings" element={<ComingSoon page="Settings" />} />
+            <Route path="settings" element={<Settings />} />
+            <Route path="production" element={<Production />} />
             <Route path="roles" element={<ComingSoon page="Roles" />} />
             <Route path="permissions" element={<ComingSoon page="Permissions" />} />
             <Route path="procurement/:id/receipt" element={<ProcurementReceipt />}/>

@@ -1,0 +1,15 @@
+Settled architecture decisions
+- FPO360 is a common ERP core with configurable business operations. Prefer extending existing modules over duplicating them.
+- crop_masters remains the single catalogue table; do not create a parallel product master.
+- Catalogue item types are AGRICULTURAL_COMMODITY, PURCHASED_PRODUCT, RAW_MATERIAL, PACKAGING_MATERIAL, and FINISHED_GOOD.
+- FarmerCrop and Procurement selection remains agricultural-commodity/crop-only. Sales can select active agricultural commodities and finished goods; this is additive and keeps the existing crop_id wire field as a legacy item-ID alias. Other catalogue item types are not sellable through Sales in this scope.
+- Historical crop IDs and transaction references remain valid. New stock events are append-only; corrections use explicit reversals.
+- The Inventory ledger is movement history; the organization/item balance table is its current projection. Reconciliation reports mismatches and must not repair them automatically.
+- Stock quantities use Decimal-compatible NUMERIC(20,6) storage. Shared stock posting and balance locks are required for every stock writer; SQLite is not evidence of PostgreSQL concurrency safety.
+- Super Admin Inventory access requires explicit organization context; unscoped access is denied.
+- A missing historical movement must not be silently recreated. Historical reconciliation requires evidence and explicit operator authorization.
+- Production & Packing V1 is accepted for the current scope. It reuses the existing catalogue and shared inventory posting service. Raw input and packaging consumption plus finished-good output are posted transactionally. Wastage is recorded separately and is not an inventory movement in V1.
+- Agricultural commodity catalogue items may be used as raw inputs in Production & Packing. The production service normalizes the persisted production input category to RAW_MATERIAL where required by the production_inputs.input_type database constraint; the source catalogue item classification remains unchanged.
+- Migration 0017 has been applied to the configured application database; the observed Alembic revision is 0017 (head). Do not blindly rerun or stamp migrations.
+- Finance Phase 1 already exists. Audit and extend the current implementation; do not create a parallel finance module.
+- The next Finance task is read-only assessment first. No product-code changes, migrations, database creation/infrastructure changes, or business-data modifications are authorized until a specific remediation task is agreed and the required authorization is obtained.

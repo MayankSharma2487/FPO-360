@@ -20,7 +20,7 @@ def create_crop_master(
     current_user: User = Depends(require_roles("Super Admin", "FPO Admin"))
 ):
     service = CropMasterService(db)
-    return service.create_crop_master(payload)
+    return service.create_crop_master(payload, current_user)
 
 
 @router.get("/", response_model=list[CropMasterResponse])
@@ -29,7 +29,7 @@ def list_crop_masters(
     current_user: User = Depends(require_roles("Super Admin", "FPO Admin", "Manager", "Accountant", "Viewer"))
 ):
     service = CropMasterService(db)
-    return service.list_crop_masters()
+    return service.list_crop_masters(current_user)
 
 
 @router.put("/{crop_id}", response_model=CropMasterResponse)
@@ -40,7 +40,7 @@ def update_crop_master(
     current_user: User = Depends(require_roles("Super Admin", "FPO Admin"))
 ):
     service = CropMasterService(db)
-    return service.update_crop_master(crop_id, payload)
+    return service.update_crop_master(crop_id, payload, current_user)
 
 
 @router.patch("/{crop_id}/status", response_model=CropMasterResponse)
@@ -51,4 +51,4 @@ def toggle_crop_master_status(
     current_user: User = Depends(require_roles("Super Admin", "FPO Admin"))
 ):
     service = CropMasterService(db)
-    return service.toggle_status(crop_id, is_active)
+    return service.toggle_status(crop_id, is_active, current_user)

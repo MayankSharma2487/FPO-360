@@ -6,6 +6,7 @@ from app.models.account import Account
 from app.models.customer import Customer
 from app.models.farmer import Farmer
 from app.models.inventory import InventoryLedger
+from app.models.inventory import InventoryBalance
 from app.models.journal import JournalEntry, JournalLine
 from app.models.payment import Payment
 from app.models.procurement import Procurement
@@ -57,10 +58,10 @@ class ReportsRepository:
         return self._page(q, page, size)
 
     def inventory(self, org, filters, page, size):
-        q = self.db.query(InventoryLedger, CropMaster.crop_name).join(CropMaster, CropMaster.id == InventoryLedger.crop_id).filter(InventoryLedger.organization_id == org, InventoryLedger.is_active.is_(True))
+        q = self.db.query(InventoryLedger, CropMaster).join(CropMaster, CropMaster.id == InventoryLedger.item_id).filter(InventoryLedger.organization_id == org, InventoryLedger.is_active.is_(True))
         if filters.get("from_date"): q = q.filter(func.date(InventoryLedger.created_at) >= filters["from_date"])
         if filters.get("to_date"): q = q.filter(func.date(InventoryLedger.created_at) <= filters["to_date"])
-        if filters.get("crop_id"): q = q.filter(InventoryLedger.crop_id == filters["crop_id"])
+        if filters.get("crop_id"): q = q.filter(InventoryLedger.item_id == filters["crop_id"])
         if filters.get("movement_type"): q = q.filter(InventoryLedger.transaction_type == filters["movement_type"])
         q = q.order_by(InventoryLedger.created_at.desc(), InventoryLedger.id.desc())
         return self._page(q, page, size)
@@ -100,6 +101,6 @@ class ReportsRepository:
         return self.db.query(Account.account_type, Account.account_subtype, Account.system_key, func.coalesce(func.sum(JournalLine.debit), 0), func.coalesce(func.sum(JournalLine.credit), 0)).join(JournalLine, (JournalLine.account_id == Account.id) & (JournalLine.organization_id == org)).join(JournalEntry, (JournalEntry.id == JournalLine.journal_entry_id) & (JournalEntry.organization_id == org)).filter(Account.organization_id == org, JournalEntry.status == "Posted", nominal_date_filter).group_by(Account.account_type, Account.account_subtype, Account.system_key).all()
 
     def inventory_stock_total(self, org, crop_id=None):
-        q = self.db.query(func.coalesce(func.sum(case((InventoryLedger.transaction_type == "IN", InventoryLedger.quantity), else_=-InventoryLedger.quantity)), 0)).filter(InventoryLedger.organization_id == org, InventoryLedger.is_active.is_(True))
-        if crop_id: q = q.filter(InventoryLedger.crop_id == crop_id)
+        q = self.db.query(func.coalesce(func.sum(InventoryBalance.quantity), 0)).filter(InventoryBalance.organization_id == org)
+        if crop_id: q = q.filter(InventoryBalance.item_id == crop_id)
         return q.scalar() or 0

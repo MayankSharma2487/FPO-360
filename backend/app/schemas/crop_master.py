@@ -11,7 +11,8 @@ class CropMasterBase(BaseModel):
 
 
 class CropMasterCreate(CropMasterBase):
-    pass
+    # Accepted for backwards compatibility; the server generates the stored code.
+    crop_code: Optional[str] = None
 
 
 class CropMasterUpdate(BaseModel):

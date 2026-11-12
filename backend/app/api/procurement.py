@@ -1,4 +1,4 @@
-from fastapi import APIRouter, Depends, status, HTTPException
+from fastapi import APIRouter, Depends, Header, status, HTTPException
 from sqlalchemy.orm import Session
 
 from app.database.database import get_db
@@ -16,11 +16,15 @@ router = APIRouter(
 @router.post("/", response_model=ProcurementResponse, status_code=status.HTTP_201_CREATED)
 def create_procurement(
     payload: ProcurementCreate,
+    idempotency_key: str | None = Header(
+        None, alias="Idempotency-Key", min_length=1, max_length=128,
+        description="Same organization and endpoint plus same payload replays the result; changed payload conflicts. Optional for legacy clients, which remain non-idempotent without a key.",
+    ),
     db: Session = Depends(get_db),
     current_user: User = Depends(require_roles("Super Admin", "FPO Admin", "Manager"))
 ):
     service = ProcurementService(db)
-    return service.create_procurement(payload, current_user)
+    return service.create_procurement(payload, current_user, idempotency_key)
 
 
 @router.get("/", response_model=list[ProcurementResponse])

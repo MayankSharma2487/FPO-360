@@ -11,6 +11,7 @@ from app.api.masters import router as masters_router
 from app.api.farmers import router as farmers_router
 from app.api.shareholders import router as shareholders_router
 from app.api.crop_masters import router as crop_masters_router
+from app.api.items import router as items_router
 from app.api.farmer_crops import router as farmer_crops_router
 from app.api.procurement import router as procurement_router
 # Add to imports
@@ -25,6 +26,7 @@ from app.api.finance_journals import router as finance_journals_router
 from app.api.finance_reports import router as finance_reports_router
 from app.api.licenses import router as licenses_router
 from app.api.reports import router as reports_router
+from app.api.production import router as production_router
 
 
 app = FastAPI(
@@ -44,6 +46,7 @@ app.include_router(masters_router)
 app.include_router(farmers_router)
 app.include_router(shareholders_router)
 app.include_router(crop_masters_router)
+app.include_router(items_router)
 app.include_router(farmer_crops_router)
 app.include_router(procurement_router)
 app.include_router(payment.router)
@@ -57,6 +60,7 @@ app.include_router(finance_journals_router)
 app.include_router(finance_reports_router)
 app.include_router(licenses_router)
 app.include_router(reports_router)
+app.include_router(production_router)
 
 @app.get("/")
 def home():

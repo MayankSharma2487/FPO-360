@@ -24,6 +24,7 @@ from app.services.journal_service import JournalService
 from app.repositories.journal_repository import JournalRepository
 from app.models.account import Account
 from app.schemas.journal import JournalCreate, JournalLineIn
+from postgres_test_safety import validate_test_database_url
 
 
 class PostgreSQLJournalLifecycleTests(unittest.TestCase):
@@ -32,17 +33,17 @@ class PostgreSQLJournalLifecycleTests(unittest.TestCase):
         url = os.getenv("FINANCE_TEST_DATABASE_URL")
         if not url:
             raise unittest.SkipTest("FINANCE_TEST_DATABASE_URL is not configured")
-        cls.engine = create_engine(url)
-        if cls.engine.dialect.name != "postgresql":
-            cls.engine.dispose()
-            raise unittest.SkipTest("Finance trigger integration tests require PostgreSQL")
+        cls.test_database_url = validate_test_database_url(url)
+        cls.engine = create_engine(cls.test_database_url)
 
     @classmethod
     def tearDownClass(cls):
         if hasattr(cls, "engine"):
+            validate_test_database_url(os.getenv("FINANCE_TEST_DATABASE_URL"))
             cls.engine.dispose()
 
     def setUp(self):
+        validate_test_database_url(os.getenv("FINANCE_TEST_DATABASE_URL"))
         self.conn = self.engine.connect()
         self.transaction = self.conn.begin()
         self.schema = "finance_test_" + uuid4().hex
@@ -65,6 +66,7 @@ class PostgreSQLJournalLifecycleTests(unittest.TestCase):
                 migration.upgrade()
 
     def tearDown(self):
+        validate_test_database_url(os.getenv("FINANCE_TEST_DATABASE_URL"))
         self.transaction.rollback()
         self.conn.close()
 

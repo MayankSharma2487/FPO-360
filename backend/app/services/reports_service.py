@@ -1,6 +1,7 @@
 from fastapi import HTTPException
 
 from app.repositories.reports_repository import ReportsRepository
+from app.repositories.inventory_repository import InventoryRepository
 from app.services.license_service import LicenseService
 
 
@@ -45,8 +46,13 @@ class ReportsService:
 
     def get_inventory_report(self, user, filters, page=1, page_size=25):
         self._validate_dates(filters); org = self._org(user)
+        if InventoryRepository(self.db).reconciliation(org):
+            raise HTTPException(
+                409,
+                "Inventory balance projection does not match the movement ledger; reconcile before reporting stock",
+            )
         _, total, raw = self.repo.inventory(org, filters, page, page_size)
-        full = [{"id": r[0].id, "date": r[0].created_at, "reference": f"{r[0].reference_type}-{r[0].reference_id}" if r[0].reference_id else r[0].reference_type, "crop_id": r[0].crop_id, "item": r[1], "movement_type": r[0].transaction_type, "quantity": r[0].quantity, "source": r[0].reference_type, "remarks": r[0].remarks} for r in raw]
+        full = [{"id": r[0].id, "date": r[0].created_at, "reference": f"{r[0].reference_type}-{r[0].reference_id}" if r[0].reference_id else r[0].reference_type, "crop_id": r[0].crop_id, "item_id": r[0].item_id, "item": r[1].crop_name, "item_type": r[1].item_type, "base_unit": r[1].base_unit, "movement_type": r[0].transaction_type, "quantity": float(r[0].quantity), "source": r[0].reference_type, "remarks": r[0].remarks} for r in raw]
         return self._response(full[(page - 1) * page_size:page * page_size], full, total, page, page_size, {"stock_in": sum(r["quantity"] for r in full if r["movement_type"] == "IN"), "stock_out": sum(r["quantity"] for r in full if r["movement_type"] == "OUT"), "current_stock": float(self.repo.inventory_stock_total(org, filters.get("crop_id"))), "movements": total}, full)
 
     def get_sales_report(self, user, filters, page=1, page_size=25):

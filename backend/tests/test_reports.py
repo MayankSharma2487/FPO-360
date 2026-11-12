@@ -4,6 +4,7 @@ from datetime import date, datetime, timezone
 from decimal import Decimal
 from types import SimpleNamespace
 
+from fastapi import HTTPException
 from sqlalchemy import create_engine, text
 from sqlalchemy.orm import Session
 from sqlalchemy.pool import StaticPool
@@ -14,7 +15,7 @@ from app.models.customer import Customer
 from app.models.crop_master import CropMaster
 from app.models.farmer import Farmer
 from app.models.financial_year import FinancialYear
-from app.models.inventory import InventoryLedger
+from app.models.inventory import InventoryBalance, InventoryLedger
 from app.models.journal import JournalEntry, JournalLine
 from app.models.license import License
 from app.models.organization import Organization
@@ -38,6 +39,7 @@ class ReportsTests(unittest.TestCase):
             Procurement.__table__.create(conn)
             Payment.__table__.create(conn)
             InventoryLedger.__table__.create(conn)
+            InventoryBalance.__table__.create(conn)
             Customer.__table__.create(conn)
             Sale.__table__.create(conn)
             FinancialYear.__table__.create(conn)
@@ -82,6 +84,11 @@ class ReportsTests(unittest.TestCase):
         ])
         self.db.flush()
         self.db.add_all([
+            InventoryBalance(organization_id=1, item_id=1, quantity=Decimal("100")),
+            InventoryBalance(organization_id=2, item_id=1, quantity=Decimal("900")),
+        ])
+        self.db.flush()
+        self.db.add_all([
             JournalLine(id=1, journal_entry_id=1, organization_id=1, line_no=1, account_id=1, debit=Decimal("100"), credit=0),
             JournalLine(id=2, journal_entry_id=1, organization_id=1, line_no=2, account_id=2, debit=0, credit=Decimal("100")),
             JournalLine(id=3, journal_entry_id=2, organization_id=2, line_no=1, account_id=3, debit=Decimal("900"), credit=0),
@@ -112,6 +119,17 @@ class ReportsTests(unittest.TestCase):
         farmers = self.service.get_farmer_report(self.user, {}, 1, 25)
         self.assertEqual(["F-1"], [row["farmer_code"] for row in farmers["items"]])
         self.assertEqual(250, farmers["items"][0]["payment_total"])
+
+    def test_inventory_report_rejects_projection_mismatch_without_repair(self):
+        balance = self.db.get(InventoryBalance, (1, 1))
+        balance.quantity = Decimal("99")
+        self.db.flush()
+        with self.assertRaises(HTTPException) as error:
+            self.service.get_inventory_report(self.user, {}, 1, 25)
+        self.assertEqual(409, error.exception.status_code)
+        self.assertIn("does not match", error.exception.detail)
+        self.assertEqual(Decimal("99"), self.db.get(InventoryBalance, (1, 1)).quantity)
+        self.assertEqual(2, self.db.query(InventoryLedger).count())
 
     def test_empty_filters_csv_export_finance_and_license_scope(self):
         empty = self.service.get_sales_report(self.user, {"from_date": date(2026, 1, 1)}, 1, 25)
