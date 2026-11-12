@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { RoleGuard } from '../components/RoleGuard';
 import { ProcurementForm } from '../components/ProcurementForm';
@@ -155,6 +155,15 @@ function KpiCard({ label, value, description, accent, icon }: KpiCardProps) {
 
 export default function Procurements() {
   const navigate = useNavigate();
+  const createRequest = useRef<{ signature: string; key: string } | null>(null);
+
+  const idempotencyKeyFor = (data: unknown) => {
+    const signature = JSON.stringify(data);
+    if (createRequest.current?.signature === signature) return createRequest.current.key;
+    const key = globalThis.crypto?.randomUUID?.() ?? `procurement-${Date.now()}-${Math.random().toString(36).slice(2)}`;
+    createRequest.current = { signature, key };
+    return key;
+  };
 
   const [procurements, setProcurements] = useState<Procurement[]>([]);
   const [loading, setLoading] = useState(true);
@@ -661,7 +670,8 @@ export default function Procurements() {
                         await procurementService.updateProcurement(editingRecord.id, data);
                         setSuccess('Procurement updated successfully');
                       } else {
-                        await procurementService.createProcurement(data);
+                        await procurementService.createProcurement(data, idempotencyKeyFor(data));
+                        createRequest.current = null;
                         setSuccess('Procurement created successfully');
                       }
                       setShowForm(false);

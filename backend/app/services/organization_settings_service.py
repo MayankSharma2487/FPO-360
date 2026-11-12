@@ -28,7 +28,17 @@ class OrganizationSettingsService:
 
         return organization
 
-    def get_settings(self, organization_id: int) -> OrganizationSettings:
+    @staticmethod
+    def _authorize_organization(organization_id: int, current_user) -> None:
+        if current_user.role.name != "Super Admin" and current_user.organization_id != organization_id:
+            raise HTTPException(
+                status_code=status.HTTP_403_FORBIDDEN,
+                detail="Access denied to organization settings",
+            )
+
+    def get_settings(self, organization_id: int, current_user) -> OrganizationSettings:
+
+        self._authorize_organization(organization_id, current_user)
 
         self._ensure_organization_exists(organization_id)
 
@@ -45,9 +55,11 @@ class OrganizationSettingsService:
     def upsert_settings(
         self,
         organization_id: int,
-        payload: OrganizationSettingsUpdate
+        payload: OrganizationSettingsUpdate,
+        current_user,
     ) -> OrganizationSettings:
 
+        self._authorize_organization(organization_id, current_user)
         self._ensure_organization_exists(organization_id)
 
         settings = self.repo.get_by_organization_id(organization_id)

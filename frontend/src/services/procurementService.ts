@@ -10,7 +10,9 @@ export const procurementService = {
     return { data: record };
   },
 
-  createProcurement: (data: any) => api.post('/procurements/', data),
+  createProcurement: (data: any, idempotencyKey: string) => api.post('/procurements/', data, {
+    headers: { 'Idempotency-Key': idempotencyKey },
+  }),
   
   updateProcurement: (id: number, data: any) => api.put(`/procurements/${id}`, data),
   

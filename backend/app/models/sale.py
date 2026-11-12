@@ -1,4 +1,4 @@
-from sqlalchemy import Column, Integer, String, Boolean, DateTime, ForeignKey, Numeric, Float
+from sqlalchemy import Column, Integer, String, Boolean, DateTime, ForeignKey, Numeric
 from sqlalchemy.sql import func
 from sqlalchemy.orm import relationship
 
@@ -16,8 +16,9 @@ class Sale(Base):
     crop_id = Column(Integer, ForeignKey("crop_masters.id", ondelete="CASCADE"), nullable=False, index=True)
     organization_id = Column(Integer, ForeignKey("organizations.id", ondelete="CASCADE"), nullable=False, index=True)
 
-    # quantity stored in KG (same convention as Procurement)
-    quantity = Column(Float, nullable=False)
+    # Stored in the selected catalogue item's base unit. Legacy crop sales
+    # remain KG-based; finished-good sales may use PCS, volume, or mass units.
+    quantity = Column(Numeric(20, 6), nullable=False)
     unit = Column(String(20), default="KG", nullable=False)
     rate_per_unit = Column(Numeric(12, 2), nullable=False)
     total_amount = Column(Numeric(12, 2), nullable=False)

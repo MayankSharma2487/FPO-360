@@ -24,6 +24,11 @@ class SaleRepository:
             .first()
         )
 
+    def get_by_id_for_update(self, sale_id: int) -> Optional[Sale]:
+        return self.db.query(Sale).filter(
+            Sale.id == sale_id
+        ).with_for_update().populate_existing().first()
+
     def get_latest_by_org(self, organization_id: int) -> Optional[Sale]:
         return (
             self.db.query(Sale)

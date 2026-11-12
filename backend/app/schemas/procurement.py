@@ -2,6 +2,7 @@ from typing import Optional
 from pydantic import BaseModel, Field
 from datetime import datetime
 from decimal import Decimal
+from pydantic import field_serializer
 
 
 class ProcurementBase(BaseModel):
@@ -9,7 +10,7 @@ class ProcurementBase(BaseModel):
     procurement_date: datetime
     farmer_id: int
     crop_id: int
-    quantity: float = Field(..., gt=0, description="User-entered quantity (will be converted to KG by backend)")
+    quantity: Decimal = Field(..., gt=0, max_digits=20, decimal_places=6, description="User-entered quantity (will be converted to KG by backend)")
     unit: str = Field(default="KG", description="Unit of measurement: KG, QUINTAL, or TON")
     rate_per_unit: Decimal = Field(..., gt=0, description="Price per unit (using user-entered unit, not KG)")
     quality_grade: Optional[str] = Field(None, description="Quality grade: A, B, C, or D")
@@ -24,7 +25,7 @@ class ProcurementCreate(ProcurementBase):
 class ProcurementUpdate(BaseModel):
     """Schema for updating procurement record - all fields optional"""
     procurement_date: Optional[datetime] = None
-    quantity: Optional[float] = Field(None, gt=0, description="User-entered quantity")
+    quantity: Optional[Decimal] = Field(None, gt=0, max_digits=20, decimal_places=6, description="User-entered quantity")
     unit: Optional[str] = Field(None, description="Unit of measurement (KG/QUINTAL/TON)")
     rate_per_unit: Optional[Decimal] = Field(None, gt=0)
     quality_grade: Optional[str] = Field(None, description="A, B, C, or D")
@@ -68,3 +69,7 @@ class ProcurementResponse(ProcurementBase):
                 "updated_at": "2026-06-30T10:30:00"
             }
         }
+
+    @field_serializer("quantity", when_used="json")
+    def serialize_quantity_as_number(self, value: Decimal):
+        return float(value)

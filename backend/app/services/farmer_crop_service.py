@@ -1,5 +1,6 @@
 from fastapi import HTTPException, status
 from sqlalchemy.orm import Session
+from app.domain.item_catalogue import ItemType
 
 from app.models.farmer_crop import FarmerCrop
 from app.repositories.farmer_crop_repository import FarmerCropRepository
@@ -23,9 +24,12 @@ class FarmerCropService:
         if not farmer or (current_user.role.name != "Super Admin" and farmer.organization_id != payload.organization_id):
             raise HTTPException(status_code=403, detail="Invalid farmer")
 
-        crop = self.crop_repo.get_by_id(payload.crop_id)
+        crop = self.crop_repo.get_active_commodity(
+            payload.crop_id,
+            None if current_user.role.name == "Super Admin" else payload.organization_id,
+        )
         if not crop:
-            raise HTTPException(status_code=404, detail="Crop not found")
+            raise HTTPException(status_code=400, detail="Invalid, inactive, or non-crop item")
 
         farmer_crop = FarmerCrop(**payload.model_dump())
         return self.repo.create(farmer_crop)
@@ -45,6 +49,11 @@ class FarmerCropService:
             raise HTTPException(status_code=404, detail="Record not found")
         if current_user.role.name != "Super Admin" and record.organization_id != current_user.organization_id:
             raise HTTPException(status_code=403, detail="Access denied")
+        if is_active and not self.crop_repo.get_active_commodity(
+            record.crop_id,
+            None if current_user.role.name == "Super Admin" else record.organization_id,
+        ):
+            raise HTTPException(status_code=400, detail="Cannot activate a farmer crop for an inactive or non-crop item")
         return self.repo.toggle_active(record, is_active)
 
     def list_farmer_crops(self, current_user):
@@ -58,6 +67,8 @@ class FarmerCropService:
 
         result = []
         for fc in farmer_crops:
+            if not fc.crop or fc.crop.item_type != ItemType.AGRICULTURAL_COMMODITY.value:
+                continue
             data = {
                 "id": fc.id,
                 "farmer_id": fc.farmer_id,

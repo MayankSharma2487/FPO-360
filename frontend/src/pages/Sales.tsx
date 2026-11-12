@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { RoleGuard } from '../components/RoleGuard';
 import { SaleForm } from '../components/SaleForm';
 import { salesService } from '../services/salesService';
@@ -12,6 +12,8 @@ interface Sale {
   customer_name: string;
   crop_id: number;
   crop_name: string;
+  item_type?: string;
+  base_unit?: string;
   quantity: number;
   unit: string;
   rate_per_unit: number;
@@ -31,25 +33,14 @@ function getInitials(name: string): string {
     .slice(0, 2);
 }
 
-function getReverseConvertedQuantity(storedQuantityInKg: any, unit: string): string {
-  const qty = Number(storedQuantityInKg) || 0;
-  let displayQuantity: number;
+function getReverseConvertedQuantity(storedQuantityInBase: any, unit: string, baseUnit = 'KG'): string {
+  const qty = Number(storedQuantityInBase) || 0;
+  const factors: Record<string, number> = { G: 0.001, KG: 1, QUINTAL: 100, TON: 1000, ML: 0.001, L: 1, PCS: 1 };
+  const displayQuantity = qty * (factors[baseUnit] || 1) / (factors[unit] || 1);
 
-  if (unit === 'QUINTAL') {
-    displayQuantity = qty / 100;
-  } else if (unit === 'TON') {
-    displayQuantity = qty / 1000;
-  } else {
-    displayQuantity = qty;
-  }
+  const formatted = Number(displayQuantity.toFixed(6)).toString();
 
-  const formatted =
-    displayQuantity % 1 === 0
-      ? displayQuantity.toString()
-      : displayQuantity.toFixed(2);
-
-  const unitLabel = unit === 'QUINTAL' ? 'QT' : unit === 'TON' ? 'MT' : 'KG';
-  return `${formatted} ${unitLabel}`;
+  return `${formatted} ${unit}`;
 }
 
 function formatCurrency(amount: any): string {
@@ -86,11 +77,7 @@ function isToday(dateStr: string): boolean {
   }
 }
 
-function unitLabel(unit: string): string {
-  if (unit === 'QUINTAL') return 'QT';
-  if (unit === 'TON') return 'MT';
-  return 'KG';
-}
+function unitLabel(unit: string): string { return unit; }
 
 interface KpiCardProps {
   label: string;
@@ -119,6 +106,16 @@ function KpiCard({ label, value, description, accent, icon }: KpiCardProps) {
 }
 
 export default function Sales() {
+  const createRequest = useRef<{ signature: string; key: string } | null>(null);
+
+  const idempotencyKeyFor = (data: unknown) => {
+    const signature = JSON.stringify(data);
+    if (createRequest.current?.signature === signature) return createRequest.current.key;
+    const key = globalThis.crypto?.randomUUID?.() ?? `sale-${Date.now()}-${Math.random().toString(36).slice(2)}`;
+    createRequest.current = { signature, key };
+    return key;
+  };
+
   const [sales, setSales] = useState<Sale[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -147,14 +144,13 @@ export default function Sales() {
 
   const todaysSales = sales.filter((s) => isToday(s.sale_date)).length;
 
-  const totalQuantityKg = sales.reduce((sum, s) => sum + (Number(s.quantity) || 0), 0);
-  const totalQuantityDisplay: string = (() => {
-    if (totalQuantityKg >= 1000) {
-      const mt = totalQuantityKg / 1000;
-      return (mt % 1 === 0 ? mt.toString() : mt.toFixed(2)) + ' MT';
-    }
-    return totalQuantityKg.toLocaleString('en-IN') + ' KG';
-  })();
+  const quantityByUnit = sales.reduce<Record<string, number>>((totals, sale) => {
+    const unit = sale.base_unit || 'KG';
+    totals[unit] = (totals[unit] || 0) + (Number(sale.quantity) || 0);
+    return totals;
+  }, {});
+  const totalQuantityDisplay = Object.entries(quantityByUnit)
+    .map(([unit, quantity]) => `${quantity.toLocaleString('en-IN')} ${unit}`).join(' · ') || '0';
 
   const totalValue = sales.reduce((sum, s) => sum + (Number(s.total_amount) || 0), 0);
   const totalValueDisplay = formatCurrency(totalValue);
@@ -451,7 +447,7 @@ export default function Sales() {
                               fontFamily: "'Space Grotesk', sans-serif",
                             }}
                           >
-                            {getReverseConvertedQuantity(s.quantity, s.unit)}
+                            {getReverseConvertedQuantity(s.quantity, s.unit, s.base_unit || 'KG')}
                           </span>
                         </td>
 
@@ -592,15 +588,24 @@ export default function Sales() {
                     Qty:{' '}
                     <span style={{ color: 'var(--text-secondary)', fontWeight: 600 }}>
                       {(() => {
-                        const kg = filtered.reduce(
-                          (sum, s) => sum + (Number(s.quantity) || 0),
-                          0
-                        );
-                        if (kg >= 1000) {
-                          const mt = kg / 1000;
-                          return (mt % 1 === 0 ? mt.toString() : mt.toFixed(2)) + ' MT';
+                        const byUnit = filtered.reduce<Record<string, number>>((totals, s) => {
+                          const unit = s.base_unit || 'KG';
+                          totals[unit] = (totals[unit] || 0) + (Number(s.quantity) || 0);
+                          return totals;
+                        }, {});
+                        const entries = Object.entries(byUnit);
+                        if (entries.length === 0) return '0';
+                        if (entries.length === 1 && entries[0][0] === 'KG') {
+                          const kg = entries[0][1];
+                          if (kg >= 1000) {
+                            const mt = kg / 1000;
+                            return (mt % 1 === 0 ? mt.toString() : mt.toFixed(2)) + ' MT';
+                          }
+                          return kg.toLocaleString('en-IN') + ' KG';
                         }
-                        return kg.toLocaleString('en-IN') + ' KG';
+                        return entries
+                          .map(([unit, qty]) => `${qty.toLocaleString('en-IN')} ${unit}`)
+                          .join(' · ');
                       })()}
                     </span>
                   </span>
@@ -636,7 +641,8 @@ export default function Sales() {
                         await salesService.updateSale(editingRecord.id, data);
                         setSuccess('Sale updated successfully');
                       } else {
-                        await salesService.createSale(data);
+                        await salesService.createSale(data, idempotencyKeyFor(data));
+                        createRequest.current = null;
                         setSuccess('Sale created successfully');
                       }
                       setShowForm(false);

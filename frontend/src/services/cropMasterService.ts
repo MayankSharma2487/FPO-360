@@ -1,9 +1,12 @@
 import api from './api';
 
 export const cropMasterService = {
+  // Existing transaction forms intentionally remain crop-only.
   getCropMasters: () => api.get('/crop-masters/'),
-  createCrop: (data: any) => api.post('/crop-masters/', data),
-  updateCrop: (id: number, data: any) => api.put(`/crop-masters/${id}`, data),
+  getItems: (params?: Record<string, string | undefined>) => api.get('/items/', { params }),
+  getNextCode: (itemType: string) => api.get('/items/next-code', { params: { item_type: itemType } }),
+  createItem: (data: any) => api.post('/items/', data),
+  updateItem: (id: number, data: any) => api.put(`/items/${id}`, data),
   toggleStatus: (id: number, isActive: boolean) => 
-    api.patch(`/crop-masters/${id}/status?is_active=${isActive}`),
+    api.patch(`/items/${id}/status?is_active=${isActive}`),
 };

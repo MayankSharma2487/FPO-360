@@ -7,7 +7,7 @@ from app.schemas.organization_settings import (
     OrganizationSettingsResponse
 )
 from app.services.organization_settings_service import OrganizationSettingsService
-from app.auth.dependencies import get_current_user, require_roles
+from app.auth.dependencies import require_roles
 from app.models.user import User
 
 router = APIRouter(
@@ -23,11 +23,11 @@ router = APIRouter(
 def get_organization_settings(
     organization_id: int,
     db: Session = Depends(get_db),
-    current_user: User = Depends(get_current_user)
+    current_user: User = Depends(require_roles("Super Admin", "FPO Admin"))
 ):
     service = OrganizationSettingsService(db)
 
-    return service.get_settings(organization_id)
+    return service.get_settings(organization_id, current_user)
 
 
 @router.put(
@@ -42,4 +42,4 @@ def update_organization_settings(
 ):
     service = OrganizationSettingsService(db)
 
-    return service.upsert_settings(organization_id, payload)
+    return service.upsert_settings(organization_id, payload, current_user)
